@@ -27,7 +27,7 @@ class Test(models.Model):
     test_description = models.CharField(max_length=500)
     test_createdby = models.ForeignKey(User, on_delete=models.CASCADE)
     test_createdon = models.DateTimeField()
-    test_duration_mins = models.DurationField()
+    test_duration_mins = models.IntegerField(default=0)
     test_sectionid = models.CharField(max_length=100,null=True, blank=True)
     timestamp = models.DateTimeField(auto_now=True)
 
