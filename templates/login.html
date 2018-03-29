@@ -2,25 +2,44 @@
 
 {% block title %}Login{% endblock %}
 
-
-
-
-
 {% block content %}
- <h1> Login </h1>
- <form class="form-signin"  method="POST" action="/admin/login">
-    {% csrf_token %}
-    <h2 class="form-signin-heading">Please sign in</h2>
-    <label for="inputEmail" class="sr-only">User Name</label>
-    <input type="input" id="inputEmail" name="username" class="form-control" placeholder="User Name" required autofocus>
-    <label for="inputPassword" class="sr-only">Password</label>
-    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>   
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
-</form>
-{{request.user.username}}
-{% if form.errors %}
-  <div class="alert alert-danger">
-      <p><strong> Error:</strong>Please enter a correct username and password. Note that both fields are case-sensitive.</p>
-  </div>
-{% endif %}
+        <div class="container">
+            <form method="POST" action="/admin/login">
+            {% csrf_token %}
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                            <h3 class="panel-title"><strong>Login Form</strong></h3>
+                    </div>
+                    <div class="panel-body">
+                        <fieldset>
+                            <div class="form-group">
+                                <div class="row">
+                                    <label class="control-label col-lg-offset-1 col-lg-2" for="Username">Username</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" class="form-control" id="Username" placeholder="Enter username"
+                                                       name="username" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <label class="control-label col-lg-offset-1 col-lg-2" for="password">Password</label>
+                                    <div class="col-lg-8">
+                                        <input type="password" class="form-control" id="password" placeholder="Enter password"
+                                                           name="password" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-lg-offset-3 col-lg-6">
+                                        <button type="submit" name="Submit" class="btn btn-primary">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                </div>
+            </form>
+        </div>
 {% endblock %}
