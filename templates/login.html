@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block title %}Login{% endblock %}
+
+
+
+
+
+{% block content %}
+ <h1> Login </h1>
+ <form class="form-signin"  method="POST" action="/admin/login">
+    {% csrf_token %}
+    <h2 class="form-signin-heading">Please sign in</h2>
+    <label for="inputEmail" class="sr-only">User Name</label>
+    <input type="input" id="inputEmail" name="username" class="form-control" placeholder="User Name" required autofocus>
+    <label for="inputPassword" class="sr-only">Password</label>
+    <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>   
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+</form>
+{{request.user.username}}
+{% if form.errors %}
+  <div class="alert alert-danger">
+      <p><strong> Error:</strong>Please enter a correct username and password. Note that both fields are case-sensitive.</p>
+  </div>
+{% endif %}
+{% endblock %}
