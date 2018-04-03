@@ -6,7 +6,6 @@ from ..models import *
 import re
 import datetime
 
-
 @login_required
 def testlist(request):
     test_value_list = Test.objects.all()
