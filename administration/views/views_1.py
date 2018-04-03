@@ -17,12 +17,23 @@ def custom_login(request):
         user = authenticate(request,username=username, password=password)
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect('/admin/')
+            if is_admin(request, user):
+                return HttpResponseRedirect('/admin/')
+            else:
+                return HttpResponseRedirect('/candidate/')
         else:
             return HttpResponse('else1')
     else:
          return HttpResponseRedirect('/login/')
         #return render(request,'login.html')
+
+def is_admin(request, user):
+    user_lists = Customuser.objects.filter(custom_userid=user).values('custom_roleid')
+    if user_lists and user_lists[0]['custom_roleid'] == 1:
+        return True
+    else:
+        return False
+
 
 @login_required
 def logout_function(request):
@@ -52,7 +63,7 @@ def user_add(request):
                 Customuser_instance.custom_userid = User.objects.latest('id')
                 Customuser_instance.custom_roleid = Role.objects.get(role_id=roleid)
                 Customuser_instance.save()
-                return render(request, 'administration/user_add.html',{'role_arqument':role_arqument})
+                return HttpResponseRedirect('/admin/user')
         else:
             return HttpResponseRedirect('/admin/user/add')
     else:
