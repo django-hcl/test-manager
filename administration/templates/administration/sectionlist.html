@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}Section{% endblock %}
+
+
+{% block content %}
+
+
+<div class="panel panel-primary">
+    <div class="panel-heading">Section List</div>
+    <div class="panel-body">
+        <table class="table table-striped table-bordered data_table" width="80%" cellspacing="0">
+            <thead>
+            <tr>
+
+                        <th><h4>Sl No</h4></th>
+                        <th><h4>Section Name</h4></th>
+
+
+            </tr>
+            </thead>
+            <tbody>
+
+            {% for section in section_list %}
+            <tr>
+                    <td><span>{{ forloop.counter }}</span></td>
+                    <td><a href="/admin/test/section/edit/{{ section.section_id }}">{{ section.section_name }}</a></td>
+
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+{% endblock %}
