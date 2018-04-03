@@ -1,4 +1,7 @@
+{% load common_extras %}
 {% if user.is_authenticated %}
+{% with is_admin=user.id|is_admin %}
+{% if is_admin %}
 <nav class="navbar navbar-inverse">
     <div class="container-fluid">
       <div class="navbar-header">
@@ -9,27 +12,56 @@
         </button>
         <a class="navbar-brand" href="{% url 'home' %}">Techie Talent</a>
       </div>
-      <div class="collapse navbar-collapse" id="myNavbar">
-        <ul class="nav navbar-nav">
-          <li class="active"><a href="{% url 'home' %}">Home</a></li>
 
-          <li class=""><a href="/admin/test">Test</a></li>
-          <li class=""><a href="/admin/test/section">Section</a></li>
-          {% comment %}
-          <li><a href="{% url 'property' %}">Property</a></li>
-          <li><a href="{% url 'transactions' %}">Transaction</a></li>
-          <li><a href="{% url 'lease' %}">Lease</a></li>
-          <li><a href="{% url 'tenants' %}">Tenants</a></li>
-          {% endcomment %}
-          <li><a href="#">Contact</a></li>
+
+         
+
+        <ul class="nav navbar-nav">
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">User<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li><a  href="{% url 'user_list' %}">User List</a></li>
+                    <li><a href="{% url 'user_add' %}">Add User</a></li>
+                </ul>
+            </li>
         </ul>
+         <ul class="nav navbar-nav">
+            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Test<span class="caret"></span></a>
+                <ul class="dropdown-menu">
+                    <li class=""><a href="/admin/test">Test</a> </li>
+                   <li class=""><a href="/admin/test/section">Section</a></li>
+                </ul>
+            </li>
+
+        </ul>
+
         <ul class="nav navbar-nav navbar-right">
           <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
           <li><a href="/admin/logout"><span class="glyphicon glyphicon-log-in"></span> Logout </a></li>
         </ul>
-      </div>
+
     </div>
   </nav>
+{% else %}
+<nav class="navbar navbar-inverse">
+     <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{% url 'home' %}">Techie Talent</a>
+      </div>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
+          <li><a href="/admin/logout"><span class="glyphicon glyphicon-log-in"></span> Logout </a></li>
+        </ul>
+
+    </div>
+</nav>
+{% endif  %}
+{% endwith %}
   {% else %}
   <nav class="navbar navbar-inverse">
       <div class="container-fluid">
@@ -53,3 +85,5 @@
       </div>
     </nav>
 {% endif %}
+
+
