@@ -24,7 +24,7 @@
             {% for test in test_list %}
             <tr>
                     <td><span>{{ forloop.counter }}</span></td>
-                    <td><a href="/{{ test.test_id }}">{{ test.test_name }}</a></td>
+                    <td><a href="/admin/test/edit/{{ test.test_id }}">{{ test.test_name }}</a></td>
 
             </tr>
             {% endfor %}

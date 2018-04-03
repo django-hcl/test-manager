@@ -28,11 +28,11 @@ class Test(models.Model):
     test_createdby = models.ForeignKey(User, on_delete=models.CASCADE)
     test_createdon = models.DateTimeField()
     test_duration_mins = models.IntegerField(default=0)
-    test_sectionid = models.CharField(max_length=100,null=True, blank=True)
+    test_sectionid = models.CharField(max_length=100, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.test_name)
+        return '%s' % self.test_name
 
 class Testsection(models.Model):
     section_id = models.AutoField(primary_key=True)
