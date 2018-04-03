@@ -44,13 +44,11 @@
       <div class="form-group">
         <label class="control-label col-sm-2" for="testsection">Sections:</label>
         <div class="col-sm-4">
-        <select class="form-control" id="" name="" multiple>
+        <select class="form-control" id="currentsection" name="currentsection" multiple>
               <option selected="selected">Select Sections:</option>
-
-                <option value="1">Section 1</option>
-                <option value="2">Section 2</option>
-                <option value="3">Section 3</option>
-
+                {% for sectionlist in testsection_record_list %}
+                <option value="{{ sectionlist.section_id }}">{{sectionlist.section_name }}</option>
+                {% endfor %}
             </select>
         </div>
       </div>
@@ -59,7 +57,7 @@
 
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-success">submit</button>
+        <button type="submit" class="btn btn-success" name="form_action" value="addtest">submit</button>
       </div>
     </div>
 
