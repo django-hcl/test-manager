@@ -6,14 +6,13 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 <body>
-<div class="container-fluid">
 
-<div class="row">
-    <nav class="navbar navbar-inverse">
+  <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
        <div class="navbar-header">
           <!--  <h1 >Techquiz</h1>-->
 
-      <a class="navbar-brand" href="#">TechQuiz</a>
+      <a class="navbar-brand" href="#">Techie Talent</a>
        </div>
         <ul class="nav navbar-nav">
             <li ><a href="/candidate/active">Active Test</a></li>
@@ -21,8 +20,18 @@
             <li><a href="/candidate/inprogress">InProgress</a></li>
              <li><a href="/candidate/completed">Completed</a></li>
         </ul>
-        </nav>
-</div>
+
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
+          <li><a href="/admin/logout"><span class="glyphicon glyphicon-log-in"></span> Logout </a></li>
+        </ul>
+        </div>
+  </nav>
+
+
+
+
+
 
  <div class="row">
      <div class="col-sm-4" >

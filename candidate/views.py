@@ -6,7 +6,8 @@ from administration.models import Customuser,Test
 # Create your views here.
 
 def index(request):
-    return render(request,'candidate/index.html')
+    #return render(request,'candidate/index.html')
+    return HttpResponseRedirect('/candidate/dashboard')
 def dashboard(request):
     return render(request,'dashboard.html')
 def activePage(request):
