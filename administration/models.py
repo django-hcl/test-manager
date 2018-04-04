@@ -37,6 +37,7 @@ class Test(models.Model):
 class Testsection(models.Model):
     section_id = models.AutoField(primary_key=True)
     section_name = models.CharField(max_length=500)
+    section_description = models.CharField(max_length=500,null=True)
     section_createdby = models.ForeignKey(User, on_delete=models.CASCADE)
     section_createdon = models.DateTimeField()
     timestamp = models.DateTimeField(auto_now=True)

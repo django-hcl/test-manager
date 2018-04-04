@@ -60,6 +60,7 @@ def addsection(request):
     section = Testsection()
     if request.method == 'POST':
         section.section_name = re.sub(' +', ' ', request.POST.get('sectionname').strip())
+        section.section_description = re.sub(' +', ' ', request.POST.get('sectiondescription').strip())
         section.section_createdby = User.objects.get(id=2)
         section.section_createdon = datetime.datetime.now()
         section.save()
