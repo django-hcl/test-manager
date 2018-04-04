@@ -5,16 +5,15 @@ from administration.models import Customuser,Test
 
 # Create your views here.
 
-def index(request):
-    #return render(request,'candidate/index.html')
-    return HttpResponseRedirect('/candidate/dashboard')
+
+   # return HttpResponseRedirect('/candidate/dashboard')
 def dashboard(request):
     return render(request,'dashboard.html')
 
-def activePage(request):
+def index(request):
     current_user = request.user
     print(current_user.id)
-    test= Customuser.objects.filter(custom_userid_id=current_user.id)
+    test= Customuser.objects.filter(custom_userid_id=2)
     for val in test:
         value=val.custom_assignedtest
         val=value.split(",")
