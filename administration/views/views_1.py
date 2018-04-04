@@ -68,3 +68,9 @@ def user_add(request):
             return HttpResponseRedirect('/admin/user/add')
     else:
         return render(request, 'administration/user_add.html',{'role_arqument':role_arqument})
+
+
+
+
+
+

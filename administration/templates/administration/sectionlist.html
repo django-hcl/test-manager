@@ -15,6 +15,7 @@
 
                         <th><h4>Sl No</h4></th>
                         <th><h4>Section Name</h4></th>
+                        <th><h4>Section Description</h4></th>
 
 
             </tr>
@@ -25,6 +26,7 @@
             <tr>
                     <td><span>{{ forloop.counter }}</span></td>
                     <td><a href="/admin/test/section/edit/{{ section.section_id }}">{{ section.section_name }}</a></td>
+                    <td>{{section.section_description}}</td>
 
             </tr>
             {% endfor %}
