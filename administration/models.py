@@ -18,7 +18,7 @@ class Customuser(models.Model):
     timestamp = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return str(self.custom_userid)
+        return '%s %s %s' % (self.custom_userid,self.custom_assignedtest,self.custom_roleid)
 
 
 class Test(models.Model):
