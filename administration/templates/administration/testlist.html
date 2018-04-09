@@ -13,8 +13,10 @@
             <thead>
             <tr>
 
-                        <th><h4>Sl No</h4></th>
-                        <th><h4>Test Name</h4></th>
+                        <th>Sl No</th>
+                        <th>Test Name</th>
+                        <th>Created By</th>
+                        <th>Created On</th>
 
 
             </tr>
@@ -25,6 +27,8 @@
             <tr>
                     <td><span>{{ forloop.counter }}</span></td>
                     <td><a href="/admin/test/edit/{{ test.test_id }}">{{ test.test_name }}</a></td>
+                    <td>{{ test.test_createdby }}</td>
+                    <td>{{ test.test_createdon }}</td>
 
             </tr>
             {% endfor %}

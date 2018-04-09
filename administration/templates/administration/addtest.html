@@ -51,6 +51,7 @@
                 {% endfor %}
             </select>
         </div>
+        <a button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Add Section</button></a>
       </div>
 
 
@@ -60,12 +61,44 @@
         <button type="submit" class="btn btn-success" name="form_action" value="addtest">submit</button>
       </div>
     </div>
-
-
   </form>
 </div>
     </div>
 
+        <div class="modal fade" id="myModal" role="dialog">
+         <div class="modal-dialog">
+         <div class="modal-content">
+          <div class="modal-header">
+
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+           <h4 class="modal-title">Create Section</h4>
+            </div>
+              <div class="modal-body">
+
+                <div class="form-group">
+                    <label for="sectionname" class="control-label col-sm-2"><b>SectionName</b></label>
+                    <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Enter SectionName" name="sectionname" required>
+                    </div>
+                    <br> </br>
+                </div>
+
+                <div class="form-group">
+                    <label for="sectiondescription" class="control-label col-sm-2"><b>SectionDescription</b></label>
+                    <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Enter Section description" name="sectiondescription" required>
+                    </div>
+                </div>
+
+                  <button class="btn btn-success"  type="submit" name="form_action" value="createsection">submit</button>
+              </div>
+                  <div class="modal-footer">
+                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+              </div>
+    </div>
+ </div>
+</div>
 
 {% endblock %}
 
