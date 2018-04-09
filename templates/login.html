@@ -12,6 +12,14 @@
                     </div>
                     <div class="panel-body">
                         <fieldset>
+                            {% if login_error %}
+                            <div class="row" >
+                                <div class="alert alert-danger col-sm-offset-3 col-sm-8">
+                                    <strong> Invalid Credential </strong><br><br>
+                                    <strong> Enter a valid Username or Password </strong><br><br>
+                                </div>
+                            </div>
+                            {% endif %}
                             <div class="form-group">
                                 <div class="row">
                                     <label class="control-label col-lg-offset-1 col-lg-2" for="Username">Username</label>
