@@ -13,10 +13,11 @@
             <thead>
             <tr>
 
-                        <th><h4>Sl No</h4></th>
-                        <th><h4>Section Name</h4></th>
-                        <th><h4>Section Description</h4></th>
-
+                        <th>Sl No</th>
+                        <th>Section Name</th>
+                        <th>Description</th>
+                        <th>Created By</th>
+                        <th>Created On</th>
 
             </tr>
             </thead>
@@ -26,7 +27,9 @@
             <tr>
                     <td><span>{{ forloop.counter }}</span></td>
                     <td><a href="/admin/test/section/edit/{{ section.section_id }}">{{ section.section_name }}</a></td>
-                    <td>{{section.section_description}}</td>
+                    <td>{{ section.section_description }}</td>
+                    <td>{{ section.section_createdby }}</td>
+                    <td>{{ section.section_createdon }}</td>
 
             </tr>
             {% endfor %}
