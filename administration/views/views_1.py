@@ -6,7 +6,6 @@ from ..models import *
 from django.contrib.auth.models import User
 
 def index(request):
-    #return HttpResponseRedirect('/candidate/')
     return render(request,'administration/index.html')
 
 def custom_login(request):
@@ -22,10 +21,11 @@ def custom_login(request):
             else:
                 return HttpResponseRedirect('/candidate/')
         else:
-            return HttpResponse('else1')
+            login_error = True
+            return render(request, 'login.html',{'login_error': login_error})
+
     else:
          return HttpResponseRedirect('/login/')
-        #return render(request,'login.html')
 
 def is_admin(request, user):
     user_lists = Customuser.objects.filter(custom_userid=user).values('custom_roleid')
@@ -65,11 +65,10 @@ def user_add(request):
                 Customuser_instance.save()
                 return HttpResponseRedirect('/admin/user')
         else:
-            return HttpResponseRedirect('/admin/user/add')
+            useradd_error = True
+            return render(request, 'administration/user_add.html',{'role_arqument':role_arqument,'useradd_error':useradd_error})
     else:
         return render(request, 'administration/user_add.html',{'role_arqument':role_arqument})
-
-
 
 
 
