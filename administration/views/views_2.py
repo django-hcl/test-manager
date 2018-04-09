@@ -5,6 +5,10 @@ from django.contrib.auth.decorators import login_required
 from ..models import *
 import re
 import datetime
+from django.urls import reverse
+from administration.forms import TestsectionForm
+
+
 
 @login_required
 def testlist(request):
@@ -17,11 +21,13 @@ def testlist(request):
 def testedit(request, id):
     test_list = Test.objects.filter(pk=id)
     request.session['temp_test_id'] = id
-    return render(request, 'administration/testedit.html', {'test_list': test_list})
+    return render(request,'administration/testedit.html', {'test_list': test_list})
 
 
 @login_required
 def addtest(request):
+    current_user = request.user.id
+    print(current_user)
     test_list = Testsection.objects.all()
     testsection_record_list = sorted(test_list, key=lambda Testsection:Testsection.section_name)
     if request.method == 'POST':
@@ -32,15 +38,13 @@ def addtest(request):
             test.test_name = re.sub(' +', ' ', request.POST.get('testname').strip())
             test.test_name = test.test_name[:1].upper() + test.test_name[1:]
             test.test_description = re.sub(' +', ' ', request.POST.get('testdescription').strip())
-            test.test_createdby = User.objects.get(id=2)
+            test.test_createdby = User.objects.get(pk=current_user)
             test.test_createdon = datetime.datetime.now()
             test.test_duration_mins = request.POST.get('testduration')
-
             sectionlist = request.POST.getlist('currentsection')
             test.test_sectionid = str(sectionlist).strip("[]")
-
             test.save()
-            return HttpResponseRedirect('/admin/test')
+            return HttpResponseRedirect(reverse('test_list'))
         else:
             return render(request, 'administration/addtest.html')
 
@@ -58,21 +62,38 @@ def testsectionlist(request):
 @login_required
 def addsection(request):
     section = Testsection()
+    current_user = request.user.id
     if request.method == 'POST':
-        section.section_name = re.sub(' +', ' ', request.POST.get('sectionname').strip())
-        section.section_description = re.sub(' +', ' ', request.POST.get('sectiondescription').strip())
-        section.section_createdby = User.objects.get(id=2)
-        section.section_createdon = datetime.datetime.now()
-        section.save()
-        return HttpResponseRedirect('/admin/test/section')
+        recordexists = Testsection.objects.filter(section_name=request.POST.get('sectionname'))
+        if recordexists:
+            existingerror = True
+            return render(request, 'administration/addsection.html', {'existingerror': existingerror})
+        else:
+            section.section_name = re.sub(' +', ' ', request.POST.get('section_name').strip())
+            section.section_description = re.sub(' +', ' ', request.POST.get('section_description').strip())
+            section.section_createdby = User.objects.get(pk=current_user)
+            section.section_createdon = datetime.datetime.now()
+            section.save()
+            return HttpResponseRedirect(reverse('test_section_list'))
     else:
-        return render(request, 'administration/addsection.html')
+        form = TestsectionForm()
+        return render(request, 'administration/addsection.html', {'form':form})
 
 
 @login_required
 def sectionedit(request, id):
-    testsection_list = Testsection.objects.filter(pk=id)
-    request.session['temp_section_id'] = id
-    return render(request, 'administration/sectionedit.html', {'test_list': testsection_list})
+    section = Testsection.objects.filter(pk=id).first()
+    current_user = request.user.id
+    if request.method == "POST":
+        sectionname = [request.POST.get('section_name'), request.POST.get('section_description')]
+        section.section_name = sectionname[0].strip()
+        section.section_description = sectionname[1].strip()
+        section.section_createdby = User.objects.get(id=current_user)
+        section.section_createdon = datetime.datetime.now()
+        section.save()
+        return HttpResponseRedirect(reverse('test_section_list'))
+    else:
+        form = TestsectionForm(instance=section)
+        return render(request, 'administration/sectionedit.html', {'form': form})
 
 

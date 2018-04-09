@@ -24,16 +24,16 @@
          <ul class="nav navbar-nav">
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Test<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                    <li ><a href="/admin/test">Test List</a> </li>
-                    <li ><a href="/admin/test/add">Test Add</a> </li>
+                    <li ><a href="{% url 'test_list' %}">Test List</a> </li>
+                    <li ><a href="{% url 'add_test' %}">Test Add</a> </li>
                 </ul>
             </li>
         </ul>
         <ul class="nav navbar-nav">
             <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Section<span class="caret"></span></a>
                 <ul class="dropdown-menu">
-                   <li ><a href="/admin/test/section">Section List</a></li>
-                   <li ><a href="/admin/test/section/add">Section Add</a></li>
+                   <li ><a href="{% url 'test_section_list' %}">Section List</a></li>
+                   <li ><a href="{% url 'add_section' %}">Section Add</a></li>
                 </ul>
             </li>
         </ul>
