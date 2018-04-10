@@ -13,5 +13,4 @@ urlpatterns = [
      path('logout', views.logout_function, name='logout_function'),
      path('user', views.user_list, name='user_list'),
      path('user/add', views.user_add, name='user_add'),
-     path('user/edit/<int:id>/', views.user_edit, name='user_edit'),
 ]
