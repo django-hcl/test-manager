@@ -1,13 +1,9 @@
-from django.core.serializers import json
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from ..models import *
 from django.contrib.auth.models import User
-from administration.forms import CustomUserForm,UserForm
-from django.urls import reverse
-
 
 def index(request):
     return render(request,'administration/index.html')
@@ -46,7 +42,7 @@ def logout_function(request):
 
 @login_required
 def user_list(request):
-    user_lists = Customuser.objects.values('id','custom_userid','custom_userid__username','custom_userid__email','custom_roleid')
+    user_lists = Customuser.objects.values('custom_userid','custom_userid__username','custom_userid__email','custom_roleid')
 
     return render(request, 'administration/user_list.html',{'user_lists': user_lists})
 
@@ -77,24 +73,3 @@ def user_add(request):
 
 
 
-def user_edit(request, id):
-    user = User.objects.filter(pk = id ).first()
-    customuser = Customuser.objects.filter(custom_userid =user.id).first()
-    user_form = UserForm()
-    customuserform = CustomUserForm()
-    if request.method == 'POST':
-        customform = CustomUserForm(request.POST)
-        userform = UserForm(request.POST)
-        role = Role.objects.filter(pk = request.POST["custom_roleid"]).first()
-        customuser.custom_userid = user
-        customuser.custom_roleid = role
-        customuser.save()
-        user.username = request.POST["username"]
-        user.email = request.POST['email']
-        user.save()
-        return HttpResponseRedirect(reverse('user_list'))
-    else:
-       customuserform = CustomUserForm(instance=customuser)
-       user_form = UserForm(instance=user)
-
-    return render(request, 'administration/user_edit.html', {'user_form': user_form,'customuserform': customuserform})
