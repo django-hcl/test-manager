@@ -39,7 +39,7 @@ class Test(BaseModel):
     test_id = models.AutoField(primary_key=True)
     test_name = models.CharField(max_length=500)
     test_description = models.CharField(max_length=500,null=True,blank=True)
-    test_duration_mins = models.IntegerField(default=0)    
+    test_duration_mins = models.IntegerField(default=0)
     
 
     def __str__(self):
@@ -56,14 +56,14 @@ class Testsection(BaseModel):
 
 class SectionMapping(BaseModel):
     sectionmap_id = models.AutoField(primary_key=True)
-    sectionmap_testid =  models.ForeignKey(Test, on_delete=models.CASCADE)
-    sectionmap_userid =  models.ForeignKey(Testsection, on_delete=models.CASCADE)  
+    sectionmap_testid = models.ForeignKey(Test, on_delete=models.CASCADE)
+    sectionmap_sectionid = models.ForeignKey(Testsection, on_delete=models.CASCADE)
     
 
 class TestMapping(BaseModel):
     testmap_id = models.AutoField(primary_key=True)
-    testmap_testid =  models.ForeignKey(Test, on_delete=models.CASCADE)
-    testmap_userid =  models.ForeignKey(User, on_delete=models.CASCADE)   
+    testmap_testid = models.ForeignKey(Test, on_delete=models.CASCADE)
+    testmap_userid = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class Complexity(BaseModel):

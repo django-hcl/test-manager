@@ -6,37 +6,175 @@
 {% block content %}
 
 
+
 <div class="panel panel-primary">
     <div class="panel-heading">Section List</div>
     <div class="panel-body">
-        <table class="table table-striped table-bordered data_table" width="100%" cellspacing="0">
+
+        <div class="row">
+            <div class="col-lg-12 text-right">
+                <a href="/admin/test/section/add" class="btn btn-primary" role="button">Add Section</a>
+            </div>
+        </div>
+        <br>
+        <table id ="section_table"class="table table-bordered data_table" width="100%" cellspacing="0">
             <thead>
             <tr>
-
-                        <th>Sl No</th>
-                        <th>Section Name</th>
-                        <th>Description</th>
-                        <th>Created By</th>
-                        <th>Created On</th>
-
+                <th>Sl No</th>
+                <th>Section Name</th>
+                <th>Description</th>
+                <th>Created By</th>
+                <th>Created On</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody>
 
             {% for section in section_list %}
-            <tr>
-                    <td><span>{{ forloop.counter }}</span></td>
-                    <td><a href="/admin/test/section/edit/{{ section.section_id }}">{{ section.section_name }}</a></td>
-                    <td>{{ section.section_description }}</td>
-                    <td>{{ section.section_createdby }}</td>
-                    <td>{{ section.section_createdon }}</td>
-
+            <tr class="section_{{ section.section_id }}  {{section.is_active|yesno:'active_row,inactive_row'}}" data-section_id="{{ section.section_id }}">
+                <td ><span>{{ forloop.counter }}</span></td>
+                <td>{{ section.section_name }}</td>
+                <td>{{ section.section_description }}</td>
+                <td>{{ section.section_createdby }}</td>
+                <td>{{ section.created_date|date:"SHORT_DATE_FORMAT" }}</td>
+                <td><a class="edit-icon" href="/admin/test/section/edit/{{ section.section_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                    <a><span class="glyphicon {{section.is_active|yesno:'glyphicon-trash, glyphicon-check'}}"></span></a></td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
+
     </div>
 </div>
+
+<div class="modal fade" id="myDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                <h4 class="modal-title" id="myDeleteModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete ?</p>
+
+
+                <div class="modal-footer" id="footerid">
+                    <button class="btn btn-standard btn-small pull-left" data-dismiss="modal">
+                        <i class="icon-remove"></i>Cancel
+                    </button>
+                    <button type="button"  data-dismiss="modal" class="btn btn-danger" id="delete_submit" >Delete</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myDeleteModal2" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                <h4 class="modal-title" id="myDeleteModalLabel2"></h4>
+            </div>
+            <div class="modal-body">
+                <p id="message_content"></p>
+
+
+                <div class="modal-footer" id="footerid2">
+                    <button class="btn btn-primary btn-small pull-right" data-dismiss="modal">
+                        <i class="icon-remove"></i>Ok
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myDeleteModal3" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                <h4 class="modal-title" id="myDeleteModalLabel3"></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure want to enable ?</p>
+
+
+                <div class="modal-footer" id="footerid3">
+                    <button type="button"  data-dismiss="modal" class="btn btn-primary" id="enable_submit" >Ok</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+
+    $(".edit-icon").on('click', function(e) {
+        if($(this).closest('tr').hasClass('inactive_row'))
+            e.preventDefault()
+    })
+
+    var delete_section_id;
+    var action_name;
+     var action;
+    $(".glyphicon-trash").on('click', function() {
+        action = "disable";
+        if($(this).closest('tr').hasClass('active_row')){
+            delete_section_id= $(this).closest('tr').data('section_id');
+            $("#myDeleteModal").modal("show");
+            action_name = "INACTIVE";
+        }else{
+            action_name = "ACTIVE";
+        }
+
+    });
+
+    $(".glyphicon-check").on('click', function() {
+        action = "enable";
+        if($(this).closest('tr').hasClass('inactive_row')){
+            delete_section_id= $(this).closest('tr').data('section_id');
+            $("#myDeleteModal3").modal("show");
+            action_name = "ACTIVE";
+        }else{
+            action_name = "INACTIVE";
+        }
+
+    });
+
+    $("#delete_submit, #enable_submit").on('click', function() {
+
+        $.ajax({
+            url:  "section/delete/",
+            type: "post",
+            dataType: 'json',
+            data: { 'id': delete_section_id, 'action' : action },
+            success: function(datas)
+            {
+                    if (datas){
+                      $('#message_content').text(datas);
+                      $("#myDeleteModal2").modal("show");
+                      }
+
+                   var current_tr = $("#section_table tbody tr.section_"+delete_section_id);
+                   if(current_tr.hasClass('active_row')){
+                        current_tr.removeClass('active_row')
+                        current_tr.addClass('inactive_row')
+                    }
+            }
+        });
+
+});
+});
+</script>
 
 
 {% endblock %}
