@@ -13,29 +13,9 @@
         <a class="navbar-brand" href="{% url 'home' %}">Techie Talent</a>
       </div>
 
-        <ul class="nav navbar-nav">
-            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">User<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li><a  href="{% url 'user_list' %}">User List</a></li>
-                </ul>
-            </li>
-        </ul>
-         <ul class="nav navbar-nav">
-            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Test<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                    <li ><a href="{% url 'test_list' %}">Test List</a> </li>
-                    <li ><a href="{% url 'add_test' %}">Test Add</a> </li>
-                </ul>
-            </li>
-        </ul>
-        <ul class="nav navbar-nav">
-            <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">Section<span class="caret"></span></a>
-                <ul class="dropdown-menu">
-                   <li ><a href="{% url 'test_section_list' %}">Section List</a></li>
-                   <li ><a href="{% url 'add_section' %}">Section Add</a></li>
-                </ul>
-            </li>
-        </ul>
+        <a class="navbar-brand" href="{% url 'user_list' %}">User</a>
+        <a class="navbar-brand" href="{% url 'test_list' %}">Test</a>
+        <a class="navbar-brand" href="{% url 'test_section_list' %}">Section</a>
 
         <ul class="nav navbar-nav navbar-right">
           <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
