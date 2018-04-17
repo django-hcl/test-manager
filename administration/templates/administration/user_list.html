@@ -12,6 +12,14 @@
                     </div>
                     <div class="panel-body">
 
+                    <div class="form-group">
+                        <div class="row">
+                            <div class="pull-right col-lg-2">
+                                <a href="user/add" class="btn btn-primary" role="button">Add User</a>
+                            </div>
+                        </div>
+                    </div>
+
                     <table class="table table-striped table-bordered data_table"  width="100%" cellspacing="0">
                         <thead>
                             <tr>
@@ -19,27 +27,23 @@
                                 <th>Username</th>
                                 <th>Email ID</th>
                                 <th>Role ID</th>
+                                <th>Created By</th>
                             </tr>
                         </thead>
                     <tbody>
                          {% for item in user_lists %}
                         <tr>
                             <td>{{item.custom_userid}}</td>
-                            <td>{{item.custom_userid__username}}</td>
+                            <td><a href ='user/edit/{{ item.custom_userid }}'>{{item.custom_userid__username}}</a></td>
                             <td>{{item.custom_userid__email}}</td>
                             <td>{{item.custom_roleid}}</td>
+                            <td>{{item.created_by}}</td>
                         </tr>
                         {% endfor %}
                         </tbody>
                     </table>
 
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-lg-offset-3 col-lg-6">
-                                <a href="user/add" class="btn btn-primary" role="button">Add User</a>
-                            </div>
-                        </div>
-                    </div>
+
                     </div>
             </div>
             </form>
