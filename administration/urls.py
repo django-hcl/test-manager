@@ -9,8 +9,27 @@ urlpatterns = [
      path('test/edit/<int:id>/', views.testedit, name='test_edit'),
      path('test/add', views.addtest, name='add_test'),
      path('test', views.testlist, name='test_list'),
+
      path('login', views.custom_login, name='custom_login'),
      path('logout', views.logout_function, name='logout_function'),
+
      path('user', views.user_list, name='user_list'),
      path('user/add', views.user_add, name='user_add'),
+     path('user/edit/<int:id>/', views.user_edit, name='user_edit'),
+
+     path('question', views.question_list, name='question_list'),
+     path('question/add', views.question_add, name='question_add'),
+     #path('question/edit/<int:id>/', views.question_edit, name='question_edit'),
+
+     path('question/choices', views.question_choice_list, name='question_choice_list'),
+
+
+     path('complexity', views.complexity_list, name='complexity_list'),
+     path('complexity/add', views.complexity_add, name='complexity_add'),
+     path('complexity/edit/<int:id>/', views.complexity_edit, name='complexity_edit'),
+
+     path('questiontype', views.questiontype_list, name='questiontype_list'),
+     path('questiontype/add', views.questiontype_add, name='questiontype_add'),
+     path('questiontype/edit/<int:id>/', views.questiontype_edit, name='questiontype_edit'),
+
 ]
