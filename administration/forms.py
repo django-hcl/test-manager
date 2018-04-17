@@ -1,12 +1,14 @@
 from django import forms
 from django.forms import ModelForm
-from administration.models import Testsection, Role,Customuser, Question, QuestionType,Complexity
+
+from administration.models import Testsection, Role,Customuser, Question, QuestionType,Complexity, Test
 from django.contrib.auth.models import User
 
 class TestsectionForm(ModelForm):
     class Meta:
         model = Testsection
         fields = ['section_name', 'section_description']
+
 
 class UserForm(ModelForm):
     username = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Username'}))
@@ -82,3 +84,10 @@ class QuestionTypeForm(ModelForm):
     class Meta:
         model = QuestionType
         fields = ('questiontype_name','questiontype_description')
+
+
+class TestForm(ModelForm):
+    class Meta:
+        model = Test
+        fields = ['test_name', 'test_description', 'test_duration_mins']
+
