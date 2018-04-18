@@ -1,7 +1,7 @@
 from django.shortcuts import render, loader
 from django.http import HttpResponse, JsonResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
-from administration.models import Customuser,Test,TestMapping
+from administration.models import Customuser,Test
 
 # Create your views here.
 
@@ -13,9 +13,13 @@ def dashboard(request):
 def index(request):
     current_user = request.user
     print(current_user.id)
-    test= TestMapping.objects.filter(testmap_userid=current_user)
+    test= Customuser.objects.filter(custom_userid_id=2)
+    for val in test:
+        value=val.custom_assignedtest
+        val=value.split(",")
+        value2=Test.objects.filter(test_id__in=val)
 
-    return render(request,'candidate/active.html',{'tests':test})
+    return render(request,'candidate/active.html',{'tests':value2})
 
 def pending(request):
     return render(request,'candidate/inprogress.html')
