@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block title %} Edit Question{% endblock %}
 
 {% block content %}
@@ -48,7 +48,7 @@
 
 
 
-            <div class="form-group" id="chocieSection" style="display:none">
+            <div class="form-group" id="chocieSection">
              <div class="row">
                  <div class="col-lg-2">
 
@@ -81,9 +81,14 @@
 
             <div class="form-group">
                 <div class="row">
-                    <div class="pull-right col-lg-2 ">
-                        <button type="submit" class="btn btn-primary" name="submit">Update</button>
+                    <div class=" col-lg-offset-2 col-lg-1">
+                        <a href="/admin/question" class="btn btn-danger" role="button">Cancel</a>
                     </div>
+                    <div class=" col-lg-2 ">
+                        <button type="submit" class="btn btn-primary" name="submit">Update</button>
+
+                    </div>
+
                 </div>
             </div>
 
@@ -109,5 +114,11 @@
       </div>
    </div>
 </div>
+<script type="text/javascript">
+   var choice_list_array = {{question_choice|safe}};
+   console.log(choice_list_array)
+   console.log(typeof(choice_list_array))
 
+</script>
+<script src="{% static 'js/choices.js' %}"></script>
 {% endblock %}
