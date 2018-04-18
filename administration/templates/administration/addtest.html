@@ -67,54 +67,58 @@
         </form>
     </div>
 </div>
-<form method="POST">
-    <div class="container">
 
-        {% csrf_token %}
-        <div class="modal fade" id="myModal" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Create Section</h4>
-                    </div>
+{% csrf_token %}
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="POST">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Create Section</h4>
+                </div>
 
-                    {% if existingsectionerror %}
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <div class="col-sm-offset-2 col-sm-4 alert alert-danger">
-                                <strong>Alert! </strong>Entered Section name already exists.please try different name
-                            </div>
+                {% if existingsectionerror %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-4 alert alert-danger">
+                            <strong>Alert! </strong>Entered Section name already exists.please try different name
                         </div>
                     </div>
+                </div>
 
-                    {%endif %}
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <br>
+                {%endif %}
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div class="row">
                             <label for="sectionname" class="control-label col-sm-2"><b>SectionName:</b></label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control" placeholder="Enter SectionName" name="sectionname" required>
                             </div>
-                            <br> </br>
                         </div>
+                    </div>
 
-                        <div class="form-group">
+                    <div class="form-group">
+                        <div class="row">
                             <label for="sectiondescription" class="control-label col-sm-2"><b>Description:</b></label>
-                            <div class="col-sm-4">
+                            <div class="col-sm-8">
                                 <input type="text" class="form-control" placeholder="Enter Section description" name="sectiondescription" required>
                             </div>
                         </div>
                     </div>
-
-                    <div class="modal-footer">
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-sm-offset-2 col-sm-10">
+                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                         <button class="btn btn-success"  type="submit" name="form_action" value="createsection">Submit</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
-</form>
+</div>
+
 {% endblock %}
 

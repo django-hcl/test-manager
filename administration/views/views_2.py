@@ -45,6 +45,7 @@ def addtest(request):
                 test.created_by = User.objects.get(pk=current_user)
                 test.created_date = datetime.datetime.now()
                 test.test_duration_mins = request.POST.get('testduration')
+
                 sectionlist = request.POST.getlist('currentsection')
                 test.test_sectionid = str(sectionlist).strip("[]")
                 test.save()
