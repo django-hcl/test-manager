@@ -37,7 +37,7 @@
                     <td><a href="/admin/test/section/mappinglist/{{ test.test_id }}">{{ test.test_name }}</a></td>
                     <td>{{ test.test_duration_mins }}</td>
                     <td>{{ test.created_by }}</td>
-                    <td>{{ test.created_date|date:"SHORT_DATE_FORMAT" }}</td>
+                    <td>{{ test.created_date }}</td>
                     <td><a class="edit-icon" href="/admin/test/edit/{{ test.test_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
                         <a><span class="glyphicon {{test.is_active|yesno:'glyphicon-trash, glyphicon-check'}}"></span></a></td>
 
@@ -72,7 +72,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="deleteFailmodal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+<div class="modal fade" id="myDeleteModal2" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -118,7 +118,7 @@
 <script>
     $(function() {
 
-    $("#test_table").on('click', '.edit-icon',function(e) {
+    $(".edit-icon").on('click', function(e) {
         if($(this).closest('tr').hasClass('inactive_row'))
             e.preventDefault()
     })
@@ -126,7 +126,7 @@
     var delete_test_id;
     var action_name;
      var action;
-    $("#test_table").on('click','.glyphicon-trash', function() {
+    $(".glyphicon-trash").on('click', function() {
         action = "disable";
         if($(this).closest('tr').hasClass('active_row')){
             delete_test_id= $(this).closest('tr').data('test_id');
@@ -138,7 +138,7 @@
 
     });
 
-    $("#test_table").on('click','.glyphicon-check', function() {
+    $(".glyphicon-check").on('click', function() {
         action = "enable";
         if($(this).closest('tr').hasClass('inactive_row')){
             delete_test_id= $(this).closest('tr').data('test_id');
@@ -159,27 +159,15 @@
             data: { 'id': delete_test_id, 'action' : action },
             success: function(datas)
             {
-            console.log('a'+datas+'b')
-                    $('#message_content').text(datas);
-                    $("#deleteFailmodal").modal("show");
-                     var current_tr = $("#test_table tbody tr.test_"+delete_test_id);
+                    if (datas){
+                      $('#message_content').text(datas);
+                      $("#myDeleteModal2").modal("show");
+                      }
 
-                    if (datas == "successfully deleted"){
-                       if(current_tr.hasClass('active_row')){
-                            current_tr.removeClass('active_row')
-                            current_tr.addClass('inactive_row')
-                            current_tr.find('.glyphicon-trash').removeClass('glyphicon-trash').addClass('glyphicon-check')
-
-                        }
-                    }
-                    else if (datas == "successfully enabled"){
-                        if(current_tr.hasClass('inactive_row')){
-                            current_tr.removeClass('inactive_row')
-                            current_tr.addClass('active_row')
-                            current_tr.find('.glyphicon-check').removeClass('glyphicon-check').addClass('glyphicon-trash')
-
-                        }
-
+                   var current_tr = $("#test_table tbody tr.test_"+delete_test_id);
+                   if(current_tr.hasClass('active_row')){
+                        current_tr.removeClass('active_row')
+                        current_tr.addClass('inactive_row')
                     }
             }
         });
