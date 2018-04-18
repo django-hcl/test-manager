@@ -1,104 +1,120 @@
 {% extends 'base.html' %}
 
 {% block title %} CreateTest {% endblock %}
-
+{% load testadd_extras %}
 {% block content %}
 
 <div class="panel panel-primary">
     <div class="panel-heading">Add Test</div>
     <div class="panel-body">
-  <form class="form-horizontal" method="POST">
-    {% csrf_token %}
-      {% if existingerror %}
+        <form class="form-horizontal" method="POST">
+            {% csrf_token %}
+            {% if existingtesterror %}
 
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-4 alert alert-danger">
-        <strong>Alert! </strong>Entered Test name already exists.please try different name
-        </div>
-        </div>
-        {%endif %}
-
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="testname">Test Name:</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" id="testname" placeholder="Enter TestName" name="testname" required>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label class="control-label col-sm-2" for="testdescription">Description:</label>
-      <div class="col-sm-4">
-        <input type="text" class="form-control" id="testdescription" placeholder="Please describe about test" name="testdescription" required>
-      </div>
-    </div>
-
-
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="testduration">Test Duration Mins:</label>
-        <div class="col-sm-4">
-        <input type="testduration" class="form-control"  id="testduration" placeholder="Enter Duration Mins" name="testduration" >
-        </div>
-      </div>
-
-
-      <div class="form-group">
-        <label class="control-label col-sm-2" for="testsection">Sections:</label>
-        <div class="col-sm-4">
-        <select class="form-control" id="currentsection" name="currentsection" multiple>
-              <option selected="selected">Select Sections:</option>
-                {% for sectionlist in testsection_record_list %}
-                <option value="{{ sectionlist.section_id }}">{{sectionlist.section_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <a button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Add Section</button></a>
-      </div>
-
-
-
-    <div class="form-group">
-      <div class="col-sm-offset-2 col-sm-10">
-        <button type="submit" class="btn btn-success" name="form_action" value="addtest">submit</button>
-      </div>
-    </div>
-  </form>
-</div>
-    </div>
-
-        <div class="modal fade" id="myModal" role="dialog">
-         <div class="modal-dialog">
-         <div class="modal-content">
-          <div class="modal-header">
-
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-           <h4 class="modal-title">Create Section</h4>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-4 alert alert-danger">
+                    <strong>Alert! </strong>Entered Test name already exists.please try different name
+                </div>
             </div>
-              <div class="modal-body">
+            {%endif %}
 
-                <div class="form-group">
-                    <label for="sectionname" class="control-label col-sm-2"><b>SectionName</b></label>
-                    <div class="col-sm-4">
-                    <input type="text" class="form-control" placeholder="Enter SectionName" name="sectionname" required>
-                    </div>
-                    <br> </br>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="testname">Test Name:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="testname" placeholder="Enter TestName" name="testname" required>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="sectiondescription" class="control-label col-sm-2"><b>SectionDescription</b></label>
-                    <div class="col-sm-4">
-                    <input type="text" class="form-control" placeholder="Enter Section description" name="sectiondescription" required>
-                    </div>
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="testdescription">Description:</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="testdescription" placeholder="Please describe about test" name="testdescription" required>
                 </div>
+            </div>
 
-                  <button class="btn btn-success"  type="submit" name="form_action" value="createsection">submit</button>
-              </div>
-                  <div class="modal-footer">
-                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-              </div>
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="testduration">Test Duration Mins:</label>
+                <div class="col-sm-4">
+                    <input type="testduration" class="form-control"  id="testduration" placeholder="Enter Duration Mins" name="testduration" >
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <label class="control-label col-sm-2" for="testsection">Sections:</label>
+                <div class="col-sm-4">
+                    <select class="form-control" id="currentsection" name="currentsection" multiple>
+                        <option selected="selected">Select Sections:</option>
+
+                        {% for sectionlist in testsection_record_list %}
+                        <option value="{{ sectionlist.section_id }}">{{ sectionlist|duplicate:duplicate_section_list  }}</option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+                <a button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Add Section</button></a>
+            </div>
+
+
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <a href="/admin/test" class="btn btn-default" role="button">Cancel</a>
+                    <button type="submit" class="btn btn-success" name="form_action" value="addtest">submit</button>
+                </div>
+            </div>
+        </form>
     </div>
- </div>
 </div>
+<form method="POST">
+    <div class="container">
 
+        {% csrf_token %}
+        <div class="modal fade" id="myModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Create Section</h4>
+                    </div>
+
+                    {% if existingsectionerror %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-4 alert alert-danger">
+                                <strong>Alert! </strong>Entered Section name already exists.please try different name
+                            </div>
+                        </div>
+                    </div>
+
+                    {%endif %}
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <br>
+                            <label for="sectionname" class="control-label col-sm-2"><b>SectionName:</b></label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="Enter SectionName" name="sectionname" required>
+                            </div>
+                            <br> </br>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="sectiondescription" class="control-label col-sm-2"><b>Description:</b></label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" placeholder="Enter Section description" name="sectiondescription" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button class="btn btn-success"  type="submit" name="form_action" value="createsection">Submit</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
 {% endblock %}
 

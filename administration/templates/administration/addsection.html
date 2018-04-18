@@ -44,13 +44,15 @@
             {% csrf_token %}
             {{form.as_p}}
             <div class="form-group">
-                <div class="col-sm-offset-2 col-sm-10">
+                <div class="col-sm-text-left">
+                    <a href="/admin/test/section" class="btn btn-default" role="button">Cancel</a>
                     <button type="submit" class="btn btn-success" name="" value="">submit</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
+
 
 
 {% endblock %}
