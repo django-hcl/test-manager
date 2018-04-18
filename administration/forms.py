@@ -1,6 +1,7 @@
 from django import forms
 from django.forms import ModelForm
-from administration.models import *
+
+from administration.models import Testsection, Role,Customuser, Question, QuestionType,Complexity, Test
 from django.contrib.auth.models import User
 
 class TestsectionForm(ModelForm):
@@ -20,6 +21,7 @@ class TestsectionForm(ModelForm):
         model = Testsection
         fields = ['section_name', 'section_description']
 
+
     '''def clean(self):
         data = self.cleaned_data
         section_name = data['section_name']
@@ -28,6 +30,7 @@ class TestsectionForm(ModelForm):
             print("entered validation")
             raise forms.ValidationError("plz give valid input")
         return data'''
+
 
 
 class UserForm(ModelForm):

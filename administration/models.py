@@ -39,7 +39,7 @@ class Test(BaseModel):
     test_id = models.AutoField(primary_key=True)
     test_name = models.CharField(max_length=500)
     test_description = models.CharField(max_length=500,null=True,blank=True)
-    test_duration_mins = models.IntegerField(blank=False)
+    test_duration_mins = models.IntegerField(default=0)
     
 
     def __str__(self):
