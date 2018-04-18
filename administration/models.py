@@ -68,16 +68,19 @@ class TestMapping(BaseModel):
 
 class Complexity(BaseModel):
     complex_id = models.AutoField(primary_key=True)
-    complex_name =  models.ForeignKey(Test, on_delete=models.CASCADE)
+    complex_name =  models.CharField(max_length=250)
     complex_description = models.CharField(max_length=500,null=True,blank=True)
  
-    
+    def __str__(self):
+        return str(self.complex_name)
 
 class QuestionType(BaseModel):
     questiontype_id = models.AutoField(primary_key=True)
     questiontype_name = models.CharField(max_length=250)
     questiontype_description = models.CharField(max_length=500,null=True,blank=True)
 
+    def __str__(self):
+        return str(self.questiontype_name)
 
 class Question(BaseModel):
     question_id = models.AutoField(primary_key=True)
@@ -85,7 +88,9 @@ class Question(BaseModel):
     question_complex = models.ForeignKey(Complexity, on_delete=models.CASCADE)
     question_type = models.ForeignKey(QuestionType, on_delete=models.CASCADE)
     question_section = models.ForeignKey(Testsection, on_delete=models.CASCADE)
-    
+
+    def __str__(self):
+        return str(self.question_text)
     
 
 class QuestionChoice(BaseModel):
@@ -94,6 +99,7 @@ class QuestionChoice(BaseModel):
     choice_text = models.CharField(max_length=500)
     choice_is_correct = models.BooleanField()
     
-    
+    def __str__(self):
+        return str(self.choice_text)
 
     
