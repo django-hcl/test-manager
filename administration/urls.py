@@ -23,7 +23,7 @@ urlpatterns = [
 
      path('question', views.question_list, name='question_list'),
      path('question/add', views.question_add, name='question_add'),
-     #path('question/edit/<int:id>/', views.question_edit, name='question_edit'),
+     path('question/edit/<int:id>/', views.question_edit, name='question_edit'),
 
      path('question/choices', views.question_choice_list, name='question_choice_list'),
 

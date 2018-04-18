@@ -8,7 +8,8 @@ from django.contrib.auth.models import User
 from administration.forms import CustomUserForm,UserForm, QuestionAddForm, ComplexityForm, QuestionTypeForm
 from django.urls import reverse
 import re
-
+import json
+from django.core import serializers
 def index(request):
     return render(request,'administration/index.html')
 
@@ -99,48 +100,54 @@ def user_edit(request, id):
     return render(request, 'administration/user_edit.html', {'user_form': user_form,'customuserform': customuserform})
 
 
-# def question_edit(request, id):
-#
-#     question = Question.objects.filter(pk=id).first()
-#     question_choice = QuestionChoice.objects.filter(choice_question__question_id = question.question_id).first()
-#
-#
-#     if request.method == 'POST':
-#
-#         complex = Complexity.objects.filter(pk = request.POST["question_complex"]).first()
-#         ques_type = QuestionType.objects.filter(pk = request.POST["question_type"]).first()
-#         selection = Testsection.objects.filter(pk = request.POST["question_section"]).first()
-#
-#         question.question_text = re.sub(' +', ' ', request.POST.get('question_text').strip())
-#         question.question_complex = complex
-#         question.question_type = ques_type
-#         question.question_section = selection
-#         question_add.save()
-#
-#         print(ques_type.questiontype_id )
-#
-#         if ques_type.questiontype_id != 3:
-#
-#             choice_val = request.POST.getlist('choices[]')
-#             choice_text_len = request.POST.getlist('choices_text')
-#
-#             for x in choice_text_len:
-#                     question_choice_add = QuestionChoice()
-#                     question_choice_add.choice_question = Question.objects.latest('question_id')
-#                     is_correct_answer = x in choice_val
-#                     choices_text_param = 'choices_text_'+str(x)
-#                     question_choice_add.choice_text = request.POST.get(choices_text_param)
-#                     question_choice_add.choice_is_correct = is_correct_answer
-#                     question_choice_add.save()
-#         return HttpResponseRedirect(reverse('question_list'))
-#
-#     else:
-#         question_edit_form = QuestionAddForm(instance=question)
-#
-#         question_choice = QuestionChoice.objects.filter(choice_question__question_id = question.question_id).first()
-#         return render(request, 'administration/question_edit.html', {'question_edit_form': question_edit_form ,'question_choice':question_choice})
+def question_edit(request, id):
 
+    question = Question.objects.filter(pk=id).first()
 
+    if request.method == 'POST':
+
+        complex = Complexity.objects.filter(pk = request.POST["question_complex"]).first()
+        ques_type = QuestionType.objects.filter(pk = request.POST["question_type"]).first()
+        selection = Testsection.objects.filter(pk = request.POST["question_section"]).first()
+
+        question.question_text = re.sub(' +', ' ', request.POST.get('question_text').strip())
+        question.question_complex = complex
+        question.question_type = ques_type
+        question.question_section = selection
+        question.save()
+
+        if ques_type.questiontype_id != 3:
+            question_choice = QuestionChoice.objects.filter(choice_question= question).delete()
+            choice_val = request.POST.getlist('choices[]')
+            choice_text_len = request.POST.getlist('choices_text')
+            for x in choice_text_len:
+                    question_choices = QuestionChoice()
+                    question_choices.choice_question = question
+                    is_correct_answer = x in choice_val
+                    choices_text_param = 'choices_text_'+str(x)
+                    question_choices.choice_text = request.POST.get(choices_text_param)
+                    question_choices.choice_is_correct = is_correct_answer
+                    question_choices.save()
+        return HttpResponseRedirect(reverse('question_list'))
+
+    else:
+        question_edit_form = QuestionAddForm(instance=question)
+
+        question_choice = QuestionChoice.objects.filter(choice_question = question)
+        choice_list_array =[]
+        for choice_row in question_choice:
+            choice_list_array_row = {}
+            choice_list_array_row['question_id']=choice_row.choice_question.question_id
+            choice_list_array_row['choice_id']=choice_row.choice_id
+            choice_list_array_row['choice_text']=choice_row.choice_text
+            choice_list_array_row['is_correct']=choice_row.choice_is_correct
+            choice_list_array_row['question_type']=choice_row.choice_question.question_type.questiontype_id
+            choice_list_array.append(choice_list_array_row)
+
+        #choice_json_array =  serializers.serialize('json', choice_list_array)
+        #choice_json_array =   choice_list_array
+        choice_json_array =  json.dumps(choice_list_array)
+        return render(request, 'administration/question_edit.html', {'question_edit_form': question_edit_form ,'question_choice':choice_json_array})
 
 
 @login_required

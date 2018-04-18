@@ -1,7 +1,45 @@
 
 
  $(document).ready(function(){
-    var question_type;
+var choice_list = choice_list_array
+choice_count = 1;
+var question_type;
+
+if(!choice_list)
+    choice_list=[]
+
+
+    if(choice_list.length){
+        for(var x=0; x<choice_list.length; x++){
+            question_type = choice_list[x].question_type
+            choice_id = choice_list[x].choice_id
+
+            var $tbody, $row, additionalRows;
+            $tbody = $('table tbody');
+            //var choiceTr = question_type==2?radioTr:checkBoxTr;
+            var choice_name = "choices_"+choice_id
+            var choice_text = "choices_text_"+choice_id
+            checked = choice_list[x].is_correct?"checked":""
+            if (question_type == 2){
+
+                choiceTr = '<tr><td><input value="'+choice_id+'" type="radio"  name="choices[]" checked="'+checked+'"></td>'
+                choiceTr +='<td><input name="'+choice_text+'" type="text" class="form-control"  value="'+choice_list[x].choice_text+'" />'
+                choiceTr +='<input name="choices_text" type="hidden" class="form-control" value="'+choice_id+'" /></td>'
+                choiceTr +='<td><input type="button" class="btn btn-primary delete-btn"  value="Delete"/></td></tr>'
+
+            }else{
+
+                choiceTr = '<tr><td><input value="'+choice_id+'" type="checkbox"  name="choices[]" checked="'+checked+'"></td>'
+                choiceTr +='<td><input name="'+choice_text+'" type="text" class="form-control" value="'+choice_list[x].choice_text+'" /></td>'
+                choiceTr +='<input name="choices_text" type="hidden" class="form-control" value="'+choice_id+'" /></td>'
+                choiceTr +='<td><input type="button" class="btn btn-primary delete-btn"  value="Delete"/></td></tr>'
+            }
+            choice_count++
+            $tbody.append(choiceTr);
+        }
+    }
+
+
     $('#id_question_type').change(function() {
     question_type = $(this).val()
     if(question_type == 3 || question_type == 0){
@@ -31,7 +69,7 @@
         addChoice()
     });
 
-   choice_count = 1;
+
    function addChoice(){
 
     var $tbody, $row, additionalRows;
