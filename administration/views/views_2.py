@@ -32,17 +32,25 @@ def addtest(request):
         form_action = request.POST['form_action']
         test = Test()
         if form_action == 'addtest':
-            test.test_name = re.sub(' +', ' ', request.POST.get('testname').strip())
-            test.test_name = test.test_name[:1].upper() + test.test_name[1:]
-            test.test_description = re.sub(' +', ' ', request.POST.get('testdescription').strip())
-            test.created_by = User.objects.get(pk=current_user)
-            test.created_date = datetime.datetime.now()
-            test.test_duration_mins = request.POST.get('testduration')
 
-            sectionlist = request.POST.getlist('currentsection')
-            test.test_sectionid = str(sectionlist).strip("[]")
-            test.save()
-            return HttpResponseRedirect(reverse('test_list'))
+            recordexists = Test.objects.filter(test_name=request.POST.get('testname')).first()
+            if recordexists:
+                print("entered addtest")
+                existingtesterror = True
+                return render(request, 'administration/addtest.html',{'existingtesterror': existingtesterror})
+            else:
+                test.test_name = re.sub(' +', ' ', request.POST.get('testname').strip())
+                test.test_name = test.test_name[:1].upper() + test.test_name[1:]
+                test.test_description = re.sub(' +', ' ', request.POST.get('testdescription').strip())
+                test.created_by = User.objects.get(pk=current_user)
+                test.created_date = datetime.datetime.now()
+                test.test_duration_mins = request.POST.get('testduration')
+
+                sectionlist = request.POST.getlist('currentsection')
+                test.test_sectionid = str(sectionlist).strip("[]")
+                test.save()
+                return HttpResponseRedirect(reverse('test_list'))
+
         else:
             return render(request, 'administration/addtest.html')
 
