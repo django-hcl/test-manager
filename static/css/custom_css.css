@@ -1,3 +1,28 @@
 .panel{
     margin:50px;
 }
+.blue {
+    color: blue;
+}
+.red {
+    color:red;
+}
+
+.green {
+    color:green;
+}
+
+.icon-muted{
+    color:gray;
+}
+
+.inactive_row, .inactive_row .edit-icon,.inactive_row .glyphicon-trash{
+    color:#777
+}
+
+.active_row, .active_row .edit-icon,.active_row .glyphicon-trash{
+    color:#337ab7
+}
+
+
+

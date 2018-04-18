@@ -1,7 +1,7 @@
-console.log('js loaded')
+console.log('js loadedsdsd')
 $(function() {
 
-    console.log( "ready!" );
+    console.log( "ready!ssdzs" );
 
     $('.data_table').DataTable();
 });

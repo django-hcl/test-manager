@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %} Edit User {% endblock %}
+
+{% block content %}
+<div class="panel panel-primary" >
+    <div class="panel-heading">Edit User</div>
+    <div class="panel-body">
+
+        <form method="post" novalidate>
+            {% csrf_token %}
+
+            <div class="form-group">
+                <div class="row">
+                    <label class="control-label col-lg-2" >Complexity Name</label>
+                    <div class="col-lg-10">
+                        {{complexity_edit_form.complex_name}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <label class="control-label col-lg-2" >Complexity Description</label>
+                    <div class="col-lg-10">
+                        {{complexity_edit_form.complex_description}}
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="pull-right col-lg-2 ">
+                        <button type="submit" class="btn btn-primary" name="submit">Update</button>
+                    </div>
+                </div>
+            </div>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

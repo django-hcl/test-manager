@@ -9,12 +9,22 @@
 <div class="panel panel-primary">
     <div class="panel-heading">Test List</div>
     <div class="panel-body">
-        <table class="table table-striped table-bordered data_table" width="100%" cellspacing="0">
+        <div class="row">
+                <div class="col-lg-12 text-right">
+                    <a href="/admin/test/add" class="btn btn-primary" role="button">Add Test</a>
+                </div>
+            </div>
+            <br>
+        <table id ="test_table" class="table table-striped table-bordered data_table" width="100%" cellspacing="0">
             <thead>
             <tr>
 
-                        <th><h4>Sl No</h4></th>
-                        <th><h4>Test Name</h4></th>
+                        <th>Sl No</th>
+                        <th>Test Name</th>
+                        <th>Test Duration</th>
+                        <th>Created By</th>
+                        <th>Created On</th>
+                        <th>Actions</th>
 
 
             </tr>
@@ -22,9 +32,14 @@
             <tbody>
 
             {% for test in test_list %}
-            <tr>
+            <tr class="test_{{ test.test_id }}  {{test.is_active|yesno:'active_row,inactive_row'}}" data-test_id="{{ test.test_id }}">
                     <td><span>{{ forloop.counter }}</span></td>
-                    <td><a href="/admin/test/edit/{{ test.test_id }}">{{ test.test_name }}</a></td>
+                    <td><a href="/admin/test/section/mappinglist/{{ test.test_id }}">{{ test.test_name }}</a></td>
+                    <td>{{ test.test_duration_mins }}</td>
+                    <td>{{ test.created_by }}</td>
+                    <td>{{ test.created_date|date:"SHORT_DATE_FORMAT" }}</td>
+                    <td><a class="edit-icon" href="/admin/test/edit/{{ test.test_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a><span class="glyphicon {{test.is_active|yesno:'glyphicon-trash, glyphicon-check'}}"></span></a></td>
 
             </tr>
             {% endfor %}
@@ -32,6 +47,146 @@
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="myDeleteModal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                <h4 class="modal-title" id="myDeleteModalLabel"></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete ?</p>
+
+
+                <div class="modal-footer" id="footerid">
+                    <button class="btn btn-standard btn-small pull-left" data-dismiss="modal">
+                        <i class="icon-remove"></i>Cancel
+                    </button>
+                    <button type="button"  data-dismiss="modal" class="btn btn-danger" id="delete_submit" >Delete</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteFailmodal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                <h4 class="modal-title" id="myDeleteModalLabel2"></h4>
+            </div>
+            <div class="modal-body">
+                <p id="message_content"></p>
+
+
+                <div class="modal-footer" id="footerid2">
+                    <button class="btn btn-primary btn-small pull-right" data-dismiss="modal">
+                        <i class="icon-remove"></i>Ok
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="myDeleteModal3" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+                <h4 class="modal-title" id="myDeleteModalLabel3"></h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure want to enable ?</p>
+
+
+                <div class="modal-footer" id="footerid3">
+                    <button type="button"  data-dismiss="modal" class="btn btn-primary" id="enable_submit" >Ok</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(function() {
+
+    $("#test_table").on('click', '.edit-icon',function(e) {
+        if($(this).closest('tr').hasClass('inactive_row'))
+            e.preventDefault()
+    })
+
+    var delete_test_id;
+    var action_name;
+     var action;
+    $("#test_table").on('click','.glyphicon-trash', function() {
+        action = "disable";
+        if($(this).closest('tr').hasClass('active_row')){
+            delete_test_id= $(this).closest('tr').data('test_id');
+            $("#myDeleteModal").modal("show");
+            action_name = "INACTIVE";
+        }else{
+            action_name = "ACTIVE";
+        }
+
+    });
+
+    $("#test_table").on('click','.glyphicon-check', function() {
+        action = "enable";
+        if($(this).closest('tr').hasClass('inactive_row')){
+            delete_test_id= $(this).closest('tr').data('test_id');
+            $("#myDeleteModal3").modal("show");
+            action_name = "ACTIVE";
+        }else{
+            action_name = "INACTIVE";
+        }
+
+    });
+
+    $("#delete_submit, #enable_submit").on('click', function() {
+
+        $.ajax({
+            url:  "test/delete/",
+            type: "post",
+            dataType: 'json',
+            data: { 'id': delete_test_id, 'action' : action },
+            success: function(datas)
+            {
+            console.log('a'+datas+'b')
+                    $('#message_content').text(datas);
+                    $("#deleteFailmodal").modal("show");
+                     var current_tr = $("#test_table tbody tr.test_"+delete_test_id);
+
+                    if (datas == "successfully deleted"){
+                       if(current_tr.hasClass('active_row')){
+                            current_tr.removeClass('active_row')
+                            current_tr.addClass('inactive_row')
+                            current_tr.find('.glyphicon-trash').removeClass('glyphicon-trash').addClass('glyphicon-check')
+
+                        }
+                    }
+                    else if (datas == "successfully enabled"){
+                        if(current_tr.hasClass('inactive_row')){
+                            current_tr.removeClass('inactive_row')
+                            current_tr.addClass('active_row')
+                            current_tr.find('.glyphicon-check').removeClass('glyphicon-check').addClass('glyphicon-trash')
+
+                        }
+
+                    }
+            }
+        });
+
+});
+});
+</script>
 
 
 {% endblock %}
