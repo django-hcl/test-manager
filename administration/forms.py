@@ -4,6 +4,25 @@ from django.forms import ModelForm
 from administration.models import Testsection, Role,Customuser, Question, QuestionType,Complexity, Test
 from django.contrib.auth.models import User
 
+
+class TestForm(ModelForm):
+    test_name = forms.CharField(
+        required=True,
+        label='Test Name',
+        max_length=15,
+        widget=forms.TextInput(attrs={'class':'form-control input-sm'})
+    )
+    test_description = forms.CharField(
+        required=True,
+        label='Description',
+        max_length=30,
+        widget=forms.TextInput(attrs={'class':'form-control input-sm'}))
+
+    class Meta:
+        model = Test
+        fields = ['test_name', 'test_description', 'test_duration_mins']
+
+
 class TestsectionForm(ModelForm):
     section_name = forms.CharField(
         required=True,
@@ -109,20 +128,5 @@ class QuestionTypeForm(ModelForm):
         fields = ('questiontype_name','questiontype_description')
 
 
-class TestForm(ModelForm):
-    test_name = forms.CharField(
-        required=True,
-        label='Test Name',
-        max_length=15,
-        widget=forms.TextInput(attrs={'class':'form-control input-sm'})
-    )
-    test_description = forms.CharField(
-        required=True,
-        label='Description',
-        max_length=30,
-        widget=forms.TextInput(attrs={'class':'form-control input-sm'}))
 
-    class Meta:
-        model = Test
-        fields = ['test_name', 'test_description', 'test_duration_mins']
 

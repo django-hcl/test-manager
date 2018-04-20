@@ -71,7 +71,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="myDeleteModal2" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteFailmodal" tabindex="-1" role="dialog" aria-labelledby="myEditModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -118,15 +118,15 @@
 <script>
     $(function() {
 
-    $(".edit-icon").on('click', function(e) {
+    $("#section_table").on('click', '.edit-icon',function(e) {
         if($(this).closest('tr').hasClass('inactive_row'))
             e.preventDefault()
     })
-
     var delete_section_id;
     var action_name;
      var action;
-    $(".glyphicon-trash").on('click', function() {
+
+    $("#section_table").on('click','.glyphicon-trash', function() {
         action = "disable";
         if($(this).closest('tr').hasClass('active_row')){
             delete_section_id= $(this).closest('tr').data('section_id');
@@ -138,7 +138,7 @@
 
     });
 
-    $(".glyphicon-check").on('click', function() {
+    $("#section_table").on('click','.glyphicon-check', function() {
         action = "enable";
         if($(this).closest('tr').hasClass('inactive_row')){
             delete_section_id= $(this).closest('tr').data('section_id');
@@ -159,15 +159,27 @@
             data: { 'id': delete_section_id, 'action' : action },
             success: function(datas)
             {
-                    if (datas){
-                      $('#message_content').text(datas);
-                      $("#myDeleteModal2").modal("show");
-                      }
+            console.log('a'+datas+'b')
+                    $('#message_content').text(datas);
+                    $("#deleteFailmodal").modal("show");
+                     var current_tr = $("#section_table tbody tr.section_"+delete_section_id);
 
-                   var current_tr = $("#section_table tbody tr.section_"+delete_section_id);
-                   if(current_tr.hasClass('active_row')){
-                        current_tr.removeClass('active_row')
-                        current_tr.addClass('inactive_row')
+                    if (datas == "successfully deleted"){
+                       if(current_tr.hasClass('active_row')){
+                            current_tr.removeClass('active_row')
+                            current_tr.addClass('inactive_row')
+                            current_tr.find('.glyphicon-trash').removeClass('glyphicon-trash').addClass('glyphicon-check')
+
+                        }
+                    }
+                    else if (datas == "successfully enabled"){
+                        if(current_tr.hasClass('inactive_row')){
+                            current_tr.removeClass('inactive_row')
+                            current_tr.addClass('active_row')
+                            current_tr.find('.glyphicon-check').removeClass('glyphicon-check').addClass('glyphicon-trash')
+
+                        }
+
                     }
             }
         });

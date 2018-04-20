@@ -11,6 +11,7 @@ import datetime
 from django.urls import reverse
 from administration.forms import TestsectionForm, TestForm
 from django.core import serializers
+from django.db.models import Avg, Max, Min,Count
 
 
 
@@ -20,19 +21,18 @@ def testlist(request):
     test_list = sorted(test_value_list, key=lambda Test: Test.test_name)
     return render(request, 'administration/testlist.html', {'test_list': test_list})
 
-
+@csrf_exempt
 @login_required
 def addtest(request):
     current_user = request.user.id
-    print(current_user)
     test_list = Testsection.objects.all()
     testsection_record_list = sorted(test_list, key=lambda Testsection:Testsection.section_name)
+    duplicate_section_list = Testsection.objects.values('section_name').annotate(Count('section_name')).filter(section_name__count__gt=1)
     if request.method == 'POST':
 
         form_action = request.POST['form_action']
         test = Test()
         if form_action == 'addtest':
-
             recordexists = Test.objects.filter(test_name=request.POST.get('testname')).first()
             if recordexists:
                 print("entered addtest")
@@ -50,12 +50,25 @@ def addtest(request):
                 test.test_sectionid = str(sectionlist).strip("[]")
                 test.save()
                 return HttpResponseRedirect(reverse('test_list'))
-
         else:
-            return render(request, 'administration/addtest.html')
-
+            print("entered validation else1")
+            recordexists = Testsection.objects.filter(section_name=request.POST.get('sectionname'))
+            if recordexists:
+                existingsectionerror = True
+                return render(request, 'administration/addtest.html',{'existingsectionerror': existingsectionerror})
+            else:
+                print("entered addsection 2")
+                section = Testsection()
+                section.section_name = re.sub(' +', ' ', request.POST.get('sectionname').strip())
+                section.section_description = re.sub(' +', ' ', request.POST.get('sectiondescription').strip())
+                section.section_createdby = User.objects.get(pk=current_user)
+                section.section_created_date = datetime.datetime.now()
+                section.save()
+                return HttpResponseRedirect(reverse('add_test'))
     else:
-        return render(request, 'administration/addtest.html', {'testsection_record_list': testsection_record_list})
+        return render(request, 'administration/addtest.html', {'testsection_record_list': testsection_record_list,
+                                                               'duplicate_section_list':duplicate_section_list})
+
 
 
 @login_required
@@ -89,21 +102,23 @@ def testsectionlist(request):
 def addsection(request):
     section = Testsection()
     current_user = request.user.id
+    form = TestsectionForm()
     if request.method == 'POST':
-        recordexists = Testsection.objects.filter(section_name=request.POST.get('sectionname'))
-        if recordexists:
-            existingerror = True
-            return render(request, 'administration/addsection.html', {'existingerror': existingerror})
-        else:
-            section.section_name = re.sub(' +', ' ', request.POST.get('section_name').strip())
-            section.section_description = re.sub(' +', ' ', request.POST.get('section_description').strip())
-            section.section_createdby = User.objects.get(pk=current_user)
-            section.section_created_date = datetime.datetime.now()
-            section.save()
-            return HttpResponseRedirect(reverse('test_section_list'))
-    else:
-        form = TestsectionForm()
-        return render(request, 'administration/addsection.html', {'form':form})
+        form = TestsectionForm(request.POST)
+        if form.is_valid():
+            recordexists = Testsection.objects.filter(section_name=request.POST.get('sectionname'))
+            if recordexists:
+                existingerror = True
+                return render(request, 'administration/addsection.html', {'existingerror': existingerror})
+            else:
+                section.section_name = re.sub(' +', ' ', request.POST.get('section_name').strip())
+                section.section_description = re.sub(' +', ' ', request.POST.get('section_description').strip())
+                section.section_createdby = User.objects.get(pk=current_user)
+                section.section_created_date = datetime.datetime.now()
+                section.save()
+                return HttpResponseRedirect(reverse('test_section_list'))
+
+    return render(request, 'administration/addsection.html', {'form':form})
 
 
 @login_required
@@ -134,10 +149,10 @@ def sectiondelete(request):
     if request.is_ajax():
         section = Testsection.objects.filter(pk=id).first()
         sectionmappingexisting = SectionMapping.objects.filter(Q(sectionmap_sectionid=id) &
-                                                                   Q(sectionmap_sectionid__is_active=1)).exists()
+                                                               Q(sectionmap_sectionid__is_active=1)).exists()
         if sectionmappingexisting:
-           data['messages'] = "You cannot delete this section."
-           return HttpResponse(json.dumps(data['messages']))
+            data['messages'] = "You cannot delete this section."
+            return HttpResponse(json.dumps(data['messages']))
         else:
             if action == "disable":
                 section.is_active = 0
@@ -162,10 +177,10 @@ def testdelete(request):
     if request.is_ajax():
         test = Test.objects.filter(pk=id).first()
         testmappingexisting = TestMapping.objects.filter(Q(testmap_testid=id) &
-                                                                   Q(testmap_testid__is_active=1)).exists()
+                                                         Q(testmap_testid__is_active=1)).exists()
         if testmappingexisting:
-           data['messages'] = "You cannot delete this test."
-           return HttpResponse(json.dumps(data['messages']))
+            data['messages'] = "You cannot delete this test."
+            return HttpResponse(json.dumps(data['messages']))
         else:
             if action == "disable":
                 test.is_active = 0
