@@ -130,3 +130,10 @@ class QuestionTypeForm(ModelForm):
 
 
 
+class RoleForm(ModelForm):
+    role_name = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Enter Role Name'}))
+    role_description = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Enter Role description'}))
+
+    class Meta:
+        model = Role
+        fields = ('role_name','role_description')
