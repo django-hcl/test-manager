@@ -17,6 +17,10 @@ urlpatterns = [
      path('login', views.custom_login, name='custom_login'),
      path('logout', views.logout_function, name='logout_function'),
 
+     path('role', views.role_list, name='role_list'),
+     path('role/add', views.role_add, name='role_add'),
+     path('role/edit/<int:id>/', views.role_edit, name='role_edit'),
+
      path('user', views.user_list, name='user_list'),
      path('user/add', views.user_add, name='user_add'),
      path('user/edit/<int:id>/', views.user_edit, name='user_edit'),
@@ -24,9 +28,7 @@ urlpatterns = [
      path('question', views.question_list, name='question_list'),
      path('question/add', views.question_add, name='question_add'),
      path('question/edit/<int:id>/', views.question_edit, name='question_edit'),
-
      path('question/choices', views.question_choice_list, name='question_choice_list'),
-
 
      path('complexity', views.complexity_list, name='complexity_list'),
      path('complexity/add', views.complexity_add, name='complexity_add'),
