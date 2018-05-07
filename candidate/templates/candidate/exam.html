@@ -1,0 +1,209 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+
+<div class="col-lg-7">
+    <div class="panel panel-primary" >
+        <div class="panel-heading">Exam</div>
+        <div class="panel-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                <div class="form-group">
+                    <div id="questionid " class="row">
+                        <label class="control-label col-lg-12 question-area">{{questionchoices.question}}</label>
+                    </div>
+                </div>
+                <div class="form-group col-lg-7" >
+                    <div class="row choice-area" >
+
+                        {% for val in questionchoices.choices %}
+                        {% if questionchoices.choice_type == "Radio"%}
+                        <input type="radio"  name="radiogroup"  value="{{ val }}">{{val}}<br>
+                        {% endif %}
+                        {% if questionchoices.choice_type == "Checkbox"%}
+                        <input type="Checkbox"  name="checkboxgroup"  value="{{ val }}" >{{val}}<br>
+                        {% endif %}
+                        {% endfor %}
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class=" col-lg-offset-8 col-lg-2 ">
+                            <button id="backid" type="button" class="btn btn-standard" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
+                        </div>
+                        <div class=" col-sm-8 col-lg-2 ">
+                            <button id="tempid" type="button" class="btn btn-primary" name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+var test=0;
+var test_id = window.location.pathname.match(/\d+/)[0];
+var initial_question = 0
+url ="";
+$(".choice-area").on( "click","input", function(){
+    $( "input:checked" ).each(function(i){
+        choicetext[i] =  $(this).val();
+     });
+});
+
+var choicetext=[];
+    $("#backid").hide();
+    $("#submitid").hide();
+    $("#tempid").on('click',function(){
+    $("#backid").show();
+
+
+
+
+if (test == 0){
+url = "http://127.0.0.1:8000/candidate"
+test= Number($(this).data("question-id"));
+test = test+1;
+}
+else{
+test= test+1;
+url = "http://127.0.0.1:8000/candidate";
+}
+
+$.ajax({
+    url:  url+"/exam_ajax_question/",
+    type: "post",
+    data: { 'value':test  , 'choicetext':choicetext},
+    success:function(serializeddata){
+    output=serializeddata.temp_id
+     console.log(output+"****");
+    if(serializeddata.temp_table_empty){
+    alert("last question");
+    window.location = "http://127.0.0.1:8000/candidate/evaluate/"+test_id;
+    }
+    else{
+     $(".question-area").html(serializeddata.question);
+    output=serializeddata.temp_id
+
+     choice_html = ""
+     if(serializeddata.choice_type == "Radio"){
+     for (var item in serializeddata.choices ){
+     choice_text = serializeddata.choices[item];
+     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' />"+choice_text+"<br>"
+     }
+     }
+     else{
+     for (var item in serializeddata.choices ){
+     choice_text = serializeddata.choices[item];
+     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' />"+choice_text+"<br>"
+     }
+     }
+
+     $(".choice-area").html(choice_html);
+
+     $("#tempid").data("question-id",serializeddata.temp_id);
+        }
+    }
+
+   })
+
+
+       });
+
+
+
+
+
+
+$("#backid").on('click',function(){
+
+
+var url = "http://127.0.0.1:8000/candidate";
+backquestionid = test-1;
+$.ajax({
+    url:  url+"/exam_ajax_question/",
+    type: "post",
+    data: { 'value': backquestionid, 'choicetext':choicetext},
+    success:function(serializeddata){
+    output=serializeddata.temp_id
+    console.log(output+"****");
+     $(".question-area").html(serializeddata.question);
+     choice_html = ""
+     if(serializeddata.choice_type == "Radio"){
+     for (var item in serializeddata.choices ){
+     choice_text = serializeddata.choices[item];
+     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' />"+choice_text+"<br>"
+     }
+     }
+     else{
+     for (var item in serializeddata.choices ){
+     choice_text = serializeddata.choices[item];
+     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' />"+choice_text+"<br>"
+     }
+     }
+
+     $(".choice-area").html(choice_html);
+
+     $("#backid").data("questionback-id",serializeddata.temp_id);
+
+    }
+
+   })
+
+
+
+test=backquestionid;
+       });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+{% endblock %}
+
+

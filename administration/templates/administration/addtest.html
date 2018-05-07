@@ -48,7 +48,7 @@
                         <option selected="selected">Select Sections:</option>
 
                         {% for sectionlist in testsection_record_list %}
-                        <option value="{{ sectionlist.section_id }}">{{ sectionlist|duplicate:duplicate_section_list  }}</option>
+                        <option id="sectionlist1" value="{{ sectionlist.section_id }}">{{ sectionlist|duplicate:duplicate_section_list  }}</option>
                         {% endfor %}
 
                     </select>
@@ -118,5 +118,16 @@
         </div>
     </div>
 </div>
+<script>
+     $(function(){
+    console.log('js addtest loaded')
+    var text1 = 'Sectionworking';
+    console.log('js addtest loaded1')
+    $('#ssectionlist1').val($('#9').text());
+        console.log('js addtest loaded2')
+        return this.text;
+        console.log('js addtest loaded3')
+    }).attr('selected', true);
+</script>
 {% endblock %}
 

@@ -7,4 +7,15 @@ urlpatterns = [
      path('completed', views.completed, name='completed'),
      path('inprogress', views.pending, name='inprogress'),
      path('upcoming', views.upcoming, name='upcoming'),
+     path('evaluate/<int:test_id>/', views.evaluate, name='evaluate'),
+
+     path('profile', views.profile, name='profile'),
+     path('instruction/<int:id>/', views.instruction, name='instruction'),
+     path('exam/<int:id>/', views.exam, name='exam'),
+     path('exam_ajax_question/',views.exam2,name='exam_ajax_question'),
+
+
+
+
+
 ]

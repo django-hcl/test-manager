@@ -6,8 +6,8 @@ register = template.Library()
 
 @register.filter()
 def is_admin(username):
-    user_lists = Customuser.objects.filter(custom_userid=username).values('custom_roleid')
-    if user_lists and user_lists[0]['custom_roleid'] == 1:
+    user_lists = Customuser.objects.filter(custom_userid=username).values('custom_roleid__role_name')
+    if user_lists and user_lists[0]['custom_roleid__role_name'] == "Admin":
         return True
     else:
         return False

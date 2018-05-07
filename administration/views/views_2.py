@@ -12,7 +12,7 @@ from django.urls import reverse
 from administration.forms import TestsectionForm, TestForm
 from django.core import serializers
 from django.db.models import Avg, Max, Min,Count
-
+import pdb
 
 
 @login_required
@@ -45,10 +45,16 @@ def addtest(request):
                 test.created_by = User.objects.get(pk=current_user)
                 test.created_date = datetime.datetime.now()
                 test.test_duration_mins = request.POST.get('testduration')
-
-                sectionlist = request.POST.getlist('currentsection')
-                test.test_sectionid = str(sectionlist).strip("[]")
                 test.save()
+                sectionlist = request.POST.getlist('currentsection')
+                for sections_id in sectionlist:
+                    testsection = Testsection.objects.get(pk = sections_id)
+                    sectionmapping = SectionMapping()
+                    sectionmapping.sectionmap_testid = Test.objects.latest('test_id')
+                    sectionmapping.sectionmap_sectionid= testsection
+                    sectionmapping.created_by = User.objects.get(pk=current_user)
+                    sectionmapping.created_date = datetime.datetime.now()
+                    sectionmapping.save()
                 return HttpResponseRedirect(reverse('test_list'))
         else:
             print("entered validation else1")
@@ -206,8 +212,73 @@ def test_asJson(request):
 
 @login_required
 def sectionmappinglist(request, id):
-    test_section_mappinglist = SectionMapping.objects.filter(sectionmap_testid=id)
+    test = Test.objects.get(pk = id)
+    test_section_mappinglist = SectionMapping.objects.filter(sectionmap_testid=test)
+    print(test_section_mappinglist)
     return render(request, 'administration/sectionmappinglist.html', {'test_section_mappinglist': test_section_mappinglist})
 
 
+@login_required
+@csrf_exempt
+def testuser_ajax(request):
+    datalist=[]
+    candidateuserlist = Customuser.objects.filter(custom_roleid__role_name="Candidate")
+    enabled = "False"
+    if request.is_ajax():
+        id = request.POST['id']
+        enabled = "True"
+        customuser = Customuser.objects.filter(pk=id).first()
+        test_mapping_list = TestMapping.objects.filter(testmap_userid__username=customuser)
+        for test in test_mapping_list:
+            data ={}
+            data["testname"]= test.testmap_testid.test_name
+            data["createdby"]= request.user.username
+            datalist.append(data)
+        serializeddata = json.dumps(datalist)
+        return HttpResponse(serializeddata, content_type='application/json')
+    return render(request, 'administration/assessmentmanagement.html', {'candidateuserlist': candidateuserlist,'enabled':enabled})
 
+
+@login_required
+@csrf_exempt
+def testuser_ajax_userid(request,user_id):
+    datalist=[]
+    candidateuserlist = Customuser.objects.filter(custom_roleid__role_name="Candidate")
+    enabled = "False"
+    if request.is_ajax():
+        id = request.POST['id']
+        enabled = "True"
+        customuser = Customuser.objects.filter(pk=id).first()
+        test_mapping_list = TestMapping.objects.filter(testmap_userid__username=customuser)
+        for test in test_mapping_list:
+            data ={}
+            data["testname"]= test.testmap_testid.test_name
+            data["createdby"]= request.user.username
+            datalist.append(data)
+        serializeddata = json.dumps(datalist)
+        return HttpResponse(serializeddata, content_type='application/json')
+    return render(request, 'administration/assessmentmanagement.html', {'candidateuserlist': candidateuserlist,'enabled':enabled})
+
+
+
+@login_required
+def testmapping(request):
+    current_user = request.user.id
+    user_list = Customuser.objects.all()
+    test_list = Test.objects.all()
+    if request.method == 'POST':
+        form_action = request.POST['form_action']
+        if form_action == 'maptest':
+            userlist = request.POST.get('currentuser')
+            user = User.objects.get(username=userlist)
+            testlist = request.POST.getlist('currenttest')
+            for tests_list in testlist:
+                test = Test.objects.get(pk=tests_list)
+                testmapping = TestMapping()
+                testmapping.testmap_testid = test
+                testmapping.testmap_userid = user
+                testmapping.created_by = User.objects.get(pk=current_user)
+                testmapping.created_date = datetime.datetime.now()
+                testmapping.save()
+            return HttpResponseRedirect(reverse('testuser_ajax'))
+    return render(request, 'administration/testmapping.html',{'test_list': test_list,'user_list':user_list})
