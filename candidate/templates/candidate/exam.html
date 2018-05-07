@@ -124,12 +124,11 @@ $("#backid").on('click',function(){
 var url = "http://127.0.0.1:8000/candidate";
 backquestionid = test-1;
 $.ajax({
-    url:  url+"/exam_ajax_question/",
+    url:  url+"/exam_ajax_previous_question/",
     type: "post",
     data: { 'value': backquestionid, 'choicetext':choicetext},
     success:function(serializeddata){
     output=serializeddata.temp_id
-    console.log(output+"****");
      $(".question-area").html(serializeddata.question);
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
