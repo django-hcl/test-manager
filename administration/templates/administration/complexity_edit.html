@@ -1,10 +1,10 @@
 {% extends 'base.html' %}
 
-{% block title %} Edit User {% endblock %}
+{% block title %} Edit Complexity {% endblock %}
 
 {% block content %}
 <div class="panel panel-primary" >
-    <div class="panel-heading">Edit User</div>
+    <div class="panel-heading">Edit Complexity</div>
     <div class="panel-body">
 
         <form method="post" novalidate>
@@ -30,7 +30,10 @@
 
             <div class="form-group">
                 <div class="row">
-                    <div class="pull-right col-lg-2 ">
+                    <div class="col-lg-offset-2 col-lg-1">
+                        <a href="/admin/complexity" class="btn btn-danger" role="button">Cancel</a>
+                    </div>
+                    <div class=" col-lg-6">
                         <button type="submit" class="btn btn-primary" name="submit">Update</button>
                     </div>
                 </div>

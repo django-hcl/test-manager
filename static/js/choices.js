@@ -19,27 +19,30 @@ if(!choice_list)
             //var choiceTr = question_type==2?radioTr:checkBoxTr;
             var choice_name = "choices_"+choice_id
             var choice_text = "choices_text_"+choice_id
+
             checked = choice_list[x].is_correct?" checked=checked":" "
 
             if (question_type == 2){
-        
                 choiceTr = '<tr><td><input value="'+choice_id+'" type="radio"  name="choices[]" '+checked+'"></td>'
                 choiceTr +='<td><input name="'+choice_text+'" type="text" class="form-control"  value="'+choice_list[x].choice_text+'" />'
                 choiceTr +='<input name="choices_text" type="hidden" class="form-control" value="'+choice_id+'" /></td>'
                 choiceTr +='<td><input type="button" class="btn btn-primary delete-btn"  value="Delete"/></td></tr>'
-
-            }else{
-
+            }
+            else{
                 choiceTr = '<tr><td><input value="'+choice_id+'" type="checkbox"  name="choices[]" '+checked+'"></td>'
                 choiceTr +='<td><input name="'+choice_text+'" type="text" class="form-control" value="'+choice_list[x].choice_text+'" /></td>'
                 choiceTr +='<input name="choices_text" type="hidden" class="form-control" value="'+choice_id+'" /></td>'
                 choiceTr +='<td><input type="button" class="btn btn-primary delete-btn"  value="Delete"/></td></tr>'
             }
-            choice_count++
-            $tbody.append(choiceTr);
-        }
+        choice_count++
+
+        $tbody.append(choiceTr);
+
     }
 
+
+
+}
 
     $('#id_question_type').change(function() {
     question_type = $(this).val()
