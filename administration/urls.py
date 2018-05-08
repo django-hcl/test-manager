@@ -1,8 +1,12 @@
 from django.urls import path
 from . import views
 
+
 urlpatterns = [
      path('', views.index, name='index'),
+     path('test/mapping', views.testmapping, name='test_mapping'),
+     path('test_user/', views.testuser_ajax, name='testuser_ajax'),
+     path('test_user/<int:user_id>/', views.testuser_ajax_userid, name='testuser_ajax_userid'),
      path('test/section/mappinglist/<int:id>/', views.sectionmappinglist, name='section_mapping_list'),
      path('test/section/delete/', views.sectiondelete, name='section_delete'),
      path('test/section/edit/<int:id>/', views.sectionedit, name='section_edit'),

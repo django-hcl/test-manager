@@ -40,7 +40,6 @@
                     <td>{{ test.created_date|date:"SHORT_DATE_FORMAT" }}</td>
                     <td><a class="edit-icon" href="/admin/test/edit/{{ test.test_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
                         <a><span class="glyphicon {{test.is_active|yesno:'glyphicon-trash, glyphicon-check'}}"></span></a></td>
-
             </tr>
             {% endfor %}
             </tbody>
@@ -104,13 +103,9 @@
             </div>
             <div class="modal-body">
                 <p>Are you sure want to enable ?</p>
-
-
                 <div class="modal-footer" id="footerid3">
                     <button type="button"  data-dismiss="modal" class="btn btn-primary" id="enable_submit" >Ok</button>
                 </div>
-
-
             </div>
         </div>
     </div>

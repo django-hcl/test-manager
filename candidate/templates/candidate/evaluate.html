@@ -1,0 +1,27 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+
+
+<div class="col-lg-6">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Result</div>
+        <div class="panel-body">
+            <div class="container">
+
+
+                <p> Number of Questions :{{total_questions}} </p>
+
+                <p> Correct Answers :{{correct_answers}} </p>
+
+                <p> Result :{{result}}</p>
+
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}

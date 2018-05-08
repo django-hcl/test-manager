@@ -33,8 +33,8 @@ def custom_login(request):
          return HttpResponseRedirect('/login/')
 
 def is_admin(request, user):
-    user_lists = Customuser.objects.filter(custom_userid=user).values('custom_roleid')
-    if user_lists and user_lists[0]['custom_roleid'] == 1:
+    user_lists = Customuser.objects.filter(custom_userid=user).values('custom_roleid__role_name')
+    if user_lists and user_lists[0]['custom_roleid__role_name'] == "Admin":
         return True
     else:
         return False

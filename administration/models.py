@@ -24,7 +24,7 @@ class Role(BaseModel):
     role_description = models.CharField(max_length=250,null=True,blank=True)
 
     def __str__(self):
-        return str(self.role_name)
+        return '%s' % (self.role_name)
 
 class Customuser(BaseModel):
     custom_userid = models.OneToOneField(User,on_delete=models.CASCADE)
@@ -32,7 +32,7 @@ class Customuser(BaseModel):
     
 
     def __str__(self):
-        return '%s %s' % (self.custom_userid,self.custom_roleid)
+        return '%s' % (self.custom_userid)
 
 
 class Test(BaseModel):
@@ -102,4 +102,29 @@ class QuestionChoice(BaseModel):
     def __str__(self):
         return str(self.choice_text)
 
-    
+
+class TempTable(models.Model):
+    temp_id = models.AutoField(primary_key=True)
+    temptable_userid = models.ForeignKey(User,on_delete=models.CASCADE)
+    temptable_question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    temptable_section= models.ForeignKey(Testsection, on_delete=models.CASCADE)
+    temptable_test = models.ForeignKey(Test, on_delete=models.CASCADE)
+    temp_created_date = models.DateTimeField(auto_now_add=True,editable=False)
+
+    def __str__(self):
+       return  str(self.temp_id)
+
+
+class TempResponse(models.Model):
+    temp_response_id = models.AutoField(primary_key=True)
+    temp_response_user = models.ForeignKey(User,on_delete=models.CASCADE)
+    choice_question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice_text = models.CharField(max_length=500)
+    temp_response_test =  models.ForeignKey(Test,on_delete=models.CASCADE,null=True,blank=True)
+    temp_response_created_date = models.DateTimeField(auto_now_add=True,editable=False)
+
+    def __str__(self):
+       return  str(self.choice_text)
+
+
+
