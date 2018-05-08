@@ -47,6 +47,7 @@
 
 var test=0;
 var test_id = window.location.pathname.match(/\d+/)[0];
+
 var initial_question = 0
 url ="";
     function clickedButton()
@@ -54,19 +55,21 @@ url ="";
                 window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
     }
 $(".choice-area").on( "click","input", function(){
+choicetext=[];
     $( "input:checked" ).each(function(i){
         choicetext[i] =  $(this).val();
+
      });
 });
 
 var choicetext=[];
     $("#backid").hide();
     $("#submitid").hide();
-    $("#tempid").on('click',function(){
+
+
+
+$("#tempid").on('click',function(){
     $("#backid").show();
-
-
-
 
 if (test == 0){
 url = "http://127.0.0.1:8000/candidate"
@@ -90,7 +93,6 @@ $.ajax({
     else{
      $(".question-area").html(serializeddata.question);
      output=serializeddata.temp_id
-
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
@@ -104,26 +106,16 @@ $.ajax({
      choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
      }
      }
-
      $(".choice-area").html(choice_html);
 
      $("#tempid").data("question-id",serializeddata.temp_id);
         }
     }
-
    })
-
-
        });
 
 
-
-
-
-
 $("#backid").on('click',function(){
-
-
 var url = "http://127.0.0.1:8000/candidate";
 backquestionid = test-1;
 $.ajax({
@@ -156,58 +148,11 @@ $.ajax({
 }
 
     }
-
    })
-
 
 
 test=backquestionid;
        });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </script>
 {% endblock %}

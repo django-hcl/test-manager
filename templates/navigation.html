@@ -13,13 +13,15 @@
         <a class="navbar-brand" href="{% url 'home' %}">Techie Talent</a>
       </div>
 
-        <a class="navbar-brand" href="{% url 'user_list' %}">User</a>
-        <a class="navbar-brand" href="{% url 'test_list' %}">Test</a>
-        <a class="navbar-brand" href="{% url 'test_section_list' %}">Section</a>
-        <a class="navbar-brand" href="{% url 'question_list' %}">Question</a>
-        <a class="navbar-brand" href="{% url 'complexity_list' %}">Complexity</a>
-        <a class="navbar-brand" href="{% url 'questiontype_list' %}">Questiontype</a>
-        <a class="navbar-brand" href="{% url 'testuser_ajax' %}">Assessment Management</a>
+        <ul class="nav navbar-nav">
+            <li><a  href="{% url 'user_list' %}">User</a></li>
+            <li><a  href="{% url 'test_list' %}">Test</a></li>
+            <li><a  href="{% url 'test_section_list' %}">Section</a></li>
+            <li><a  href="{% url 'question_list' %}">Question</a></li>
+            <li><a  href="{% url 'complexity_list' %}">Complexity</a></li>
+            <li><a  href="{% url 'questiontype_list' %}">Questiontype</a></li>
+            <li><a  href="{% url 'testuser_ajax' %}">Assessment Management</a></li>
+        </ul>
 
         <ul class="nav navbar-nav navbar-right">
           <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
