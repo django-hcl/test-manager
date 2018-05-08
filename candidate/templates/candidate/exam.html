@@ -44,24 +44,29 @@
     </div>
 </div>
 <script>
+
+
 var test=0;
 var test_id = window.location.pathname.match(/\d+/)[0];
+
 var initial_question = 0
 url ="";
 $(".choice-area").on( "click","input", function(){
+choicetext=[];
     $( "input:checked" ).each(function(i){
         choicetext[i] =  $(this).val();
+
      });
 });
 
 var choicetext=[];
     $("#backid").hide();
     $("#submitid").hide();
-    $("#tempid").on('click',function(){
+
+
+
+$("#tempid").on('click',function(){
     $("#backid").show();
-
-
-
 
 if (test == 0){
 url = "http://127.0.0.1:8000/candidate"
@@ -79,6 +84,7 @@ $.ajax({
     data: { 'value':test  , 'choicetext':choicetext},
     success:function(serializeddata){
     output=serializeddata.temp_id
+
      console.log(output+"****");
     if(serializeddata.temp_table_empty){
     alert("last question");
@@ -87,18 +93,17 @@ $.ajax({
     else{
      $(".question-area").html(serializeddata.question);
     output=serializeddata.temp_id
-
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' />"+choice_text+"<br>"
+     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' name='choices[]' />"+choice_text+"<br>"
      }
      }
      else{
      for (var item in serializeddata.choices ){
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' />"+choice_text+"<br>"
+     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name='choices[]' />"+choice_text+"<br>"
      }
      }
 
@@ -114,10 +119,6 @@ $.ajax({
        });
 
 
-
-
-
-
 $("#backid").on('click',function(){
 
 
@@ -126,8 +127,9 @@ backquestionid = test-1;
 $.ajax({
     url:  url+"/exam_ajax_question/",
     type: "post",
-    data: { 'value': backquestionid, 'choicetext':choicetext},
+    data: { 'value': backquestionid},
     success:function(serializeddata){
+
     output=serializeddata.temp_id
     console.log(output+"****");
      $(".question-area").html(serializeddata.question);
@@ -149,59 +151,14 @@ $.ajax({
 
      $("#backid").data("questionback-id",serializeddata.temp_id);
 
+     if ("{{questionchoices.temp_id}}" == serializeddata.temp_id )
+         $("#backid").hide();
     }
-
    })
-
 
 
 test=backquestionid;
        });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </script>
 {% endblock %}
