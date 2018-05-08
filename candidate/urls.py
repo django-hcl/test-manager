@@ -12,8 +12,7 @@ urlpatterns = [
      path('profile', views.profile, name='profile'),
      path('instruction/<int:id>/', views.instruction, name='instruction'),
      path('exam/<int:id>/', views.exam, name='exam'),
-     path('exam_ajax_question/',views.exam2,name='exam_ajax_question'),
-     path('exam_ajax_previous_question/',views.exam_previous_question,name='exam_ajax_previous_question'),
+     path('exam_ajax_question/',views.exam2,name='exam_ajax_question')
 
 
 

@@ -83,13 +83,25 @@ class CustomUserForm(ModelForm):
         model = Customuser
         fields = ('custom_userid', 'custom_roleid')
 
+
 class QuestionAddForm(ModelForm):
+    class Meta:
+        model = Question
+        fields = ('question_text','question_complex','question_type','question_section')
+
+    def __init__(self, *args, **kwargs):
+        super(QuestionAddForm, self).__init__(*args, **kwargs)
+        self.testsection = Testsection.objects.all()
+        question_section_choice = [(x.section_id, x.section_name) for x in self.testsection ]
+        question_section_choice.insert(0,(0, '--- Select ---'))
+        self.fields['question_section'] = forms.ChoiceField(
+            choices=question_section_choice,widget=forms.Select(attrs={'class':'form-control'}))
+
     def addDefaultOption(options):
         return options.insert(0,(0, '--- Select ---'))
 
     complexity = Complexity.objects.all()
     questiontype = QuestionType.objects.all()
-    testsection = Testsection.objects.all()
 
     question_type_choice = [(x.questiontype_id, x.questiontype_name) for x in questiontype ]
     addDefaultOption(question_type_choice)
@@ -97,17 +109,10 @@ class QuestionAddForm(ModelForm):
     question_complex_choice = [(x.complex_id, x.complex_name) for x in complexity ]
     addDefaultOption(question_complex_choice)
 
-    question_section_choice = [(x.section_id, x.section_name) for x in testsection ]
-    addDefaultOption(question_section_choice)
 
     question_text = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Question Text'}))
     question_complex = forms.ChoiceField(choices=question_complex_choice,widget=forms.Select(attrs={'class':'form-control'}))
     question_type = forms.ChoiceField(choices=question_type_choice,widget=forms.Select(attrs={'class':'form-control'}))
-    question_section = forms.ChoiceField(choices=question_section_choice,widget=forms.Select(attrs={'class':'form-control'}))
-
-    class Meta:
-        model = Question
-        fields = ('question_text','question_complex','question_type','question_section')
 
 
 class ComplexityForm(ModelForm):

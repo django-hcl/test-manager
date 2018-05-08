@@ -44,7 +44,6 @@ def profile(request):
 @csrf_exempt
 def exam(request,id=None):
     if not request.is_ajax():
-        # pdb.set_trace()
         current_user = request.user
         data ={}
         simplequestionslist=[]
@@ -108,56 +107,11 @@ def exam2(request):
                 test_id = Test.objects.filter(pk = temp_tabl.temptable_test.test_id ).first()
                 candidate_choices= request.POST.getlist("choicetext[]")
                 user = User.objects.get(username=current_user)
-                current_question = temp_tabl.temptable_question.question_id -1
-
-                question = Question.objects.filter(pk = current_question ).first()
-                for eachchoice in candidate_choices:
-                    tmpresponse = TempResponse()
-                    tmpresponse.temp_response_user = user
-                    tmpresponse.choice_question = question
-                    tmpresponse.choice_text = eachchoice
-                    tmpresponse.temp_response_test = test_id
-                    tmpresponse.save()
-                choices = QuestionChoice.objects.filter(choice_question__question_id=temp_tabl.temptable_question.question_id)
-
-
-                questionchoices['question'] = temp_tabl.temptable_question.question_text
-
-                questionchoices['choices'] = [ choice.choice_text for choice in choices ]
-                questionchoices['choice_type'] = temp_tabl.temptable_question.question_type.questiontype_name
-                questionchoices['temp_id'] =  temp_tabl.temp_id
-                questionchoices['test_id'] = test_id.test_id
-            serializeddata = json.dumps(questionchoices)
-
-            return HttpResponse(serializeddata, content_type='application/json')
-
-
-
-
-
-@csrf_exempt
-def exam_previous_question(request):
-     if request.is_ajax():
-            questionchoices={}
-            id = request.POST['value']
-            button_action = request.POST['previous']
-            current_user = request.user
-            user = User.objects.get(username=current_user)
-            temp_tabl = TempTable.objects.filter(temp_id=id).first()
-            if button_action == "previous":
-                pass
-            elif button_action == "next":
-
-
-                if temp_tabl == None:
-                    questionchoices['temp_table_empty'] = True
+                current_temp_tabl = TempTable.objects.filter(temp_id=int(id)-1).first()
+                if  not current_temp_tabl:
+                    question = Question.objects.filter(pk =temp_tabl.temptable_question.question_id).first()
                 else:
-                    test_id = Test.objects.filter(pk = temp_tabl.temptable_test.test_id ).first()
-                    candidate_choices= request.POST.getlist("choicetext[]")
-
-                current_question = temp_tabl.temptable_question.question_id -1
-
-                question = Question.objects.filter(pk = current_question ).first()
+                    question = Question.objects.filter(question_id = current_temp_tabl.temptable_question.question_id ).first()
                 for eachchoice in candidate_choices:
                     tmpresponse = TempResponse()
                     tmpresponse.temp_response_user = user
@@ -172,10 +126,7 @@ def exam_previous_question(request):
                 questionchoices['temp_id'] =  temp_tabl.temp_id
                 questionchoices['test_id'] = test_id.test_id
             serializeddata = json.dumps(questionchoices)
-
             return HttpResponse(serializeddata, content_type='application/json')
-
-
 
 
 
