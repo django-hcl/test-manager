@@ -83,11 +83,12 @@ def testedit(request, id):
     section = Testsection.objects.filter(pk=id).first()
     current_user = request.user.id
     if request.method == "POST":
-        testname = [request.POST.get('test_name'), request.POST.get('test_description')]
+        testname = [request.POST.get('test_name'), request.POST.get('test_description'),request.POST.get('test_duration_mins')]
         test.test_name = testname[0].strip()
         test.test_description = testname[1].strip()
         test.test_modified_by = User.objects.get(id=current_user)
         test.test_modified_date = datetime.datetime.now()
+        test.test_duration_mins = testname[2].strip()
         test.save()
         return HttpResponseRedirect(reverse('test_list'))
     else:

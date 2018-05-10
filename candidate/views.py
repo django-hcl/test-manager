@@ -14,21 +14,23 @@ def dashboard(request):
 
 def index(request):
     current_user = request.user
-    active_test= TestMapping.objects.filter(testmap_userid=current_user)
+    active_test= TestMapping.objects.filter(testmap_userid=current_user,testmap_status__in=(0,3))
     return render(request,'candidate/active.html',{'active_test':active_test})
 
-
 def instruction(request,id):
-
     test_name = TestMapping.objects.filter(pk=id).first()
     return render(request,'candidate/instruction.html',{'test_name':test_name})
 
-def pending(request):
-    return render(request,'candidate/inprogress.html')
+
+def rewrite(request,id):
+    test_name = TestMapping.objects.filter(pk=id).first()
+    return render(request,'candidate/exam_rewrite.html',{'test_name':test_name})
+
 def completed(request):
-    return render(request,'candidate/completed.html')
-def upcoming(request):
-    return render(request,'candidate/upcoming.html')
+    current_user = request.user
+    completed_test= TestMapping.objects.filter(testmap_userid=current_user,testmap_status__in=(1,2))
+    return render(request,'candidate/completed.html',{'completed_test':completed_test})
+
 
 def profile(request):
 
@@ -80,18 +82,20 @@ def exam(request,id=None):
                     tmptable.temptable_test = test
                     tmptable.save()
         temp_tabl = TempTable.objects.filter(temptable_userid = user,temptable_test = test).order_by('temp_id')[0]
+        temp_tabl_q_count=TempTable.objects.filter(temptable_userid = user,temptable_test = test).count()
         choices  = QuestionChoice.objects.filter(choice_question__question_id=temp_tabl.temptable_question.question_id)
         questionchoices={}
         questionchoices['question'] = temp_tabl.temptable_question
         questionchoices['choices'] = [ choice.choice_text for choice in choices ]
         questionchoices['choice_type'] = temp_tabl.temptable_question.question_type.questiontype_name
         questionchoices['temp_id'] =  temp_tabl.temp_id
-    return render(request,'candidate/exam.html',{'questionchoices':questionchoices,'test':test,'choices':choices})
 
 
+        test_status_object=TestMapping.objects.get(testmap_userid=current_user,testmap_testid=id)
+        test_status_object.testmap_status=3
+        test_status_object.save()
 
-
-
+    return render(request,'candidate/exam.html',{'questionchoices':questionchoices,'test':test,'choices':choices,'temp_tabl_q_count':temp_tabl_q_count})
 
 
 @csrf_exempt
@@ -99,6 +103,7 @@ def exam2(request):
      if request.is_ajax():
             questionchoices={}
             id = request.POST['value']
+            print(id)
             current_user = request.user
             temp_tabl = TempTable.objects.filter(temp_id=id).first()
             if temp_tabl == None:
@@ -129,7 +134,6 @@ def exam2(request):
             return HttpResponse(serializeddata, content_type='application/json')
 
 
-
 def evaluate(request,test_id):
     ques_choice = []
     sample=[]
@@ -137,6 +141,8 @@ def evaluate(request,test_id):
     user = User.objects.filter(username = current_user).first()
     temp_response_list =TempResponse.objects.filter(temp_response_user__id=user.id, temp_response_test__test_id=test_id)\
         .values('choice_question__question_id', 'choice_text')
+
+    total_questions=TempTable.objects.filter(temptable_userid__id=user.id, temptable_test__test_id=test_id).count()
     print(temp_response_list)
     for temp_resp in temp_response_list:
         for key,value in temp_resp.items():
@@ -147,19 +153,21 @@ def evaluate(request,test_id):
                 if choice_list:
                     sample.append(choice_list)
                 ques_choice.append(ques_choice_list)
-    total_questions = len(temp_response_list)
+    # total_questions = len(temp_response_list)
     print(total_questions)
     correct_answers = len(sample)
     candidate_percentage =int((correct_answers / total_questions)*100)
+    test_status_object=TestMapping.objects.get(testmap_userid=current_user,testmap_testid=test_id)
     if candidate_percentage > 40:
+        test_status_object.testmap_status=1
         result = "Pass"
     else:
+        test_status_object.testmap_status=2
         result = "Fail"
 
-    TempResponse.objects.all().delete()
+    test_status_object.save()
+
     TempTable.objects.all().delete()
 
     return render(request,'candidate/evaluate.html',{'correct_answers':correct_answers,'result':result,'total_questions':total_questions})
-
-
 

@@ -6,7 +6,7 @@
 var popupWindow;
 // JavaScript popup window function
 	function basicPopup(url) {
-var h = 600//screen.height;
+var h = screen.height;
 var w = screen.width;
         popupWindow = window.open(url,'Exam',
         'height='+h+',width='+w+',left=50,top=50,resizable=no,scrollbars=no,toolbar=no,menubar=no,location=yes,directories=no, status=no')
@@ -14,28 +14,16 @@ var w = screen.width;
 
 	}
 </script>
+
 <div class="col-sm-7">
     <div class="panel panel-primary">
         <div class="panel-heading">Instructions</div>
         <div class="panel-body">
             <div class="container">
+                <h3>Exam has been closed or Interrupted
+                Click  Start Quiz to continue
+                </h3>
 
-                <h2>The Test</h2>
-
-                <p>The test contains 10 questions and there is 30 minutes time limit.&nbsp;</p>
-
-                <h2>Count Your Score</h2>
-
-
-                <p>  At the end of the Quiz, your total score will be Displayed</p>
-
-                <p>Minimum score is 40 percentage to pass </p>
-
-                <h2>Start the Quiz</h2>
-
-                <p>Test Name is  {{test_name.testmap_testid.test_name}}</p>
-
-                <p>Good luck!</p>
 
             </div>
             <form method="post" >
@@ -47,7 +35,6 @@ var w = screen.width;
                             <a href="/candidate" class="btn btn-danger" role="button" >Cancel</a>
                         </div>
                         <div class="col-lg-offset-1 col-lg-1">
-                            <!--<a href="#" onclick="window.open('/candidate/exam/{{test_name.testmap_testid.test_id}}','Exam','height=700,width=2000')" class="btn btn-success" >Start Quiz</a>-->
                             <a href="#" onclick= "basicPopup('/candidate/exam/{{test_name.testmap_testid.test_id}}')" class="btn btn-success" >Start Quiz</a>
                         </div>
                     </div>
@@ -58,18 +45,3 @@ var w = screen.width;
 </div>
 
 {% endblock %}
-
-
-
-
-<!--<script>-->
-
-
-    <!--function popitup() {-->
-
-       <!--newwindow=;-->
-     <!---->
-       <!--if (window.focus) {newwindow.focus()}-->
-       <!--return false;-->
-     <!--}-->
-<!--</script>-->
