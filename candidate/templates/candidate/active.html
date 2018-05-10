@@ -13,14 +13,19 @@
                 <tr>
                             <th><h4>Sl No</h4></th>
                             <th><h4>Test Name</h4></th>
+                            <th><h4>Status</h4></th>
                 </tr>
                 </thead>
                 <tbody>
-
                 {% for test in active_test %}
                 <tr>
                         <td><span>{{ forloop.counter }}</span></td>
-                        <td><a href ='instruction/{{test.testmap_id}}'>{{ test.testmap_testid.test_name }}</a></td>
+                        <td>{{ test.testmap_testid.test_name }}</td>
+                        {% if test.testmap_status == 0 %}
+                        <td ><a href ='instruction/{{test.testmap_id}}' class="text-success">Yet to Start</a></td>
+                        {%elif test.testmap_status == 3 %}
+                        <td ><a href='rewrite/{{test.testmap_id}}' class="text-primary">Interrupted</a></td>
+                        {%endif%}
 
                 </tr>
                 {% endfor %}

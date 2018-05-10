@@ -1,27 +1,35 @@
-{% extends 'dashboard.html' %}
 
 {% block content %}
 
-<div class="col-lg-7">
-    <div class="panel panel-primary" >
-        <div class="panel-heading">Exam</div>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<div class=""  style="height:100%"  >
+    <div class="panel panel-lg panel-primary"  style="height:100%"  >
+        <div class="panel-heading">EXAM
+
+                <div id="showtime" class="pull-right"> Time</div>
+
+        </div>
         <div class="panel-body">
             <form method="post" novalidate>
                 {% csrf_token %}
-                <div class="form-group">
+                <div class="form-group col-lg-offset-1">
                     <div id="questionid " class="row">
-                        <label class="control-label col-lg-12 question-area">{{questionchoices.question}}</label>
+                        <label class="control-label  col-lg-12 question-area">1.&nbsp;{{questionchoices.question}}</label>
                     </div>
                 </div>
-                <div class="form-group col-lg-7" >
+                <div class="form-group col-lg-offset-1 col-lg-7 " >
                     <div class="row choice-area" >
 
                         {% for val in questionchoices.choices %}
                         {% if questionchoices.choice_type == "Radio"%}
-                        <input type="radio"  name="radiogroup"  value="{{ val }}">{{val}}<br>
+                        <input type="radio"  name="radiogroup"  value="{{ val }}">  &nbsp;&nbsp; {{val}}<br>
                         {% endif %}
                         {% if questionchoices.choice_type == "Checkbox"%}
-                        <input type="Checkbox"  name="checkboxgroup"  value="{{ val }}" >{{val}}<br>
+                        <input type="Checkbox"  name="checkboxgroup"  value="{{ val }}" > &nbsp;&nbsp; {{val}}<br>
                         {% endif %}
                         {% endfor %}
 
@@ -33,8 +41,8 @@
                         <div class=" col-lg-offset-8 col-lg-2 ">
                             <button id="backid" type="button" class="btn btn-standard" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
                         </div>
-                        <div class=" col-sm-8 col-lg-2 ">
-                            <button id="tempid" type="button" class="btn btn-primary" name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
+                        <div class=" col-sm-8 col-lg-2 " id="next1">
+                            <button id="tempid" type="button" class="btn btn-primary"   onclick ='temp_click()' name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
                         </div>
                     </div>
                 </div>
@@ -42,18 +50,25 @@
             </form>
         </div>
     </div>
+
 </div>
+
 <script>
 
 var test=0;
 var test_id = window.location.pathname.match(/\d+/)[0];
 
+var slno = 1;
+
 var initial_question = 0
 url ="";
-    function clickedButton()
+
+function clickedButton()
             {
-                window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
+          window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
     }
+
+
 $(".choice-area").on( "click","input", function(){
 choicetext=[];
     $( "input:checked" ).each(function(i){
@@ -68,51 +83,80 @@ var choicetext=[];
 
 
 
-$("#tempid").on('click',function(){
+function temp_click(){
     $("#backid").show();
 
 if (test == 0){
 url = "http://127.0.0.1:8000/candidate"
-test= Number($(this).data("question-id"));
+test= Number($("#tempid").data("question-id"));
+
 test = test+1;
 }
 else{
 test= test+1;
 url = "http://127.0.0.1:8000/candidate";
 }
-
 $.ajax({
     url:  url+"/exam_ajax_question/",
     type: "post",
     data: { 'value':test  , 'choicetext':choicetext},
     success:function(serializeddata){
+    slno++
     output=serializeddata.temp_id
-    if(serializeddata.temp_table_empty){
+
+
+if(parseInt('{{temp_tabl_q_count}}')==slno)
+    {
+
+
     $("#tempid").replaceWith("<button id='tempid' type='button' class='btn btn-primary' onclick ='clickedButton()' name='submit' data-question-id ='{{questionchoices.temp_id}}' >Submit</button>");
-    }
-    else{
-     $(".question-area").html(serializeddata.question);
+$(".question-area").html(slno+".&nbsp;"+serializeddata.question);
      output=serializeddata.temp_id
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp;"+choice_text+"<br>"
      }
      }
      else{
      for (var item in serializeddata.choices ){
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp; "+choice_text+"<br>"
+     }
+     }
+     $(".choice-area").html(choice_html);
+
+     $("#tempid").data("question-id",serializeddata.temp_id);
+
+
+    }
+    else{
+     $(".question-area").html(slno+".&nbsp;"+serializeddata.question);
+     output=serializeddata.temp_id
+     choice_html = ""
+     if(serializeddata.choice_type == "Radio"){
+     for (var item in serializeddata.choices ){
+     choice_text = serializeddata.choices[item];
+     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp;"+choice_text+"<br>"
+     }
+     }
+     else{
+     for (var item in serializeddata.choices ){
+     choice_text = serializeddata.choices[item];
+     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp; "+choice_text+"<br>"
      }
      }
      $(".choice-area").html(choice_html);
 
      $("#tempid").data("question-id",serializeddata.temp_id);
         }
+
+
+
     }
    })
-       });
+       }
 
 
 $("#backid").on('click',function(){
@@ -123,38 +167,78 @@ $.ajax({
     type: "post",
     data: { 'value': backquestionid},
     success:function(serializeddata){
+    //decrementing the serial number
+    slno--
     output=serializeddata.temp_id
-     $(".question-area").html(serializeddata.question);
+     $(".question-area").html(slno+".&nbsp;"+serializeddata.question);
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' />"+choice_text+"<br>"
+     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' /> &nbsp;&nbsp;"+choice_text+"<br>"
      }
      }
      else{
      for (var item in serializeddata.choices ){
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' />"+choice_text+"<br>"
+     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' /> &nbsp;&nbsp; "+choice_text+"<br>"
      }
      }
 
      $(".choice-area").html(choice_html);
+$("#tempid").replaceWith("<button id='tempid' type='button' class='btn btn-primary' onclick ='temp_click()' name='submit' data-question-id ='{{questionchoices.temp_id}}' >Next</button>");
 
      $("#backid").data("questionback-id",serializeddata.temp_id);
      if ("{{questionchoices.temp_id}}" == serializeddata.temp_id )
      {
      $("#backid").hide();
 }
-
     }
    })
-
-
 test=backquestionid;
        });
 
+
+    //Timer Function
+        var tim;
+        var min = '{{test.test_duration_mins}}';
+        var sec = '00';
+        var f = new Date();
+
+        function customSubmit(someValue){
+
+        	 document.questionForm.minute.value = min;
+        	 document.questionForm.second.value = sec;
+        	 document.questionForm.submit();
+        	 }
+        examTimer()
+        function examTimer() {
+
+            if (parseInt(sec) >0) {
+
+			    document.getElementById("showtime").innerHTML = "Time Remaining - "+min+" Min : " + sec+" Sec";
+                sec = parseInt(sec) - 1;
+                tim = setTimeout("examTimer()", 1000);
+            }
+            else {
+			    if (parseInt(min)==0 && parseInt(sec)==0){
+			    	document.getElementById("showtime").innerHTML = "Time Remaining :"+min+" Minutes ," + sec+" Seconds";
+				   //calling the submit function
+				     clickedButton();
+			     }
+
+                if (parseInt(sec) == 0) {
+				    document.getElementById("showtime").innerHTML = "Time Remaining :"+min+" Minutes ," + sec+" Seconds";
+                    min = parseInt(min) - 1;
+					sec=59;
+                    tim = setTimeout("examTimer()", 1000);
+                }
+
+            }
+        }
+
 </script>
+
 {% endblock %}
 
 
