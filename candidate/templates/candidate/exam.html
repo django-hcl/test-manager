@@ -6,30 +6,28 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
 
-<div class=""  style="height:100%"  >
-    <div class="panel panel-lg panel-primary"  style="height:100%"  >
-        <div class="panel-heading">EXAM
-
-                <div id="showtime" class="pull-right"> Time</div>
-
+<div class="col-lg-7">
+    <div class="panel panel-primary" >
+        <div class="panel-heading">Exam
+            <div id="showtime" class="pull-right"> Time</div>
         </div>
         <div class="panel-body">
             <form method="post" novalidate>
                 {% csrf_token %}
-                <div class="form-group col-lg-offset-1">
+                <div class="form-group">
                     <div id="questionid " class="row">
-                        <label class="control-label  col-lg-12 question-area">1.&nbsp;{{questionchoices.question}}</label>
+                        <label class="control-label col-lg-12 question-area">{{questionchoices.question}}</label>
                     </div>
                 </div>
-                <div class="form-group col-lg-offset-1 col-lg-7 " >
+                <div class="form-group col-lg-7" >
                     <div class="row choice-area" >
 
                         {% for val in questionchoices.choices %}
                         {% if questionchoices.choice_type == "Radio"%}
-                        <input type="radio"  name="radiogroup"  value="{{ val }}">  &nbsp;&nbsp; {{val}}<br>
+                        <input type="radio"  name="radiogroup"  value="{{ val }}">{{val}}<br>
                         {% endif %}
                         {% if questionchoices.choice_type == "Checkbox"%}
-                        <input type="Checkbox"  name="checkboxgroup"  value="{{ val }}" > &nbsp;&nbsp; {{val}}<br>
+                        <input type="Checkbox"  name="checkboxgroup"  value="{{ val }}" >{{val}}<br>
                         {% endif %}
                         {% endfor %}
 
@@ -39,10 +37,10 @@
                 <div class="form-group">
                     <div class="row">
                         <div class=" col-lg-offset-8 col-lg-2 ">
-                            <button id="backid" type="button" class="btn btn-standard" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
+                            <button id="back_btn" type="button" class="btn btn-standard action_button" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
                         </div>
-                        <div class=" col-sm-8 col-lg-2 " id="next1">
-                            <button id="tempid" type="button" class="btn btn-primary"   onclick ='temp_click()' name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
+                        <div class=" col-sm-8 col-lg-2 ">
+                            <button id="next_btn" type="button" class="btn btn-primary action_button" name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
                         </div>
                     </div>
                 </div>
@@ -50,25 +48,19 @@
             </form>
         </div>
     </div>
-
 </div>
-
 <script>
 
 var test=0;
 var test_id = window.location.pathname.match(/\d+/)[0];
-
-var slno = 1;
-
 var initial_question = 0
 url ="";
-
-function clickedButton()
+var submit_bool=false;
+    function clickedButton()
             {
-          window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
+
+
     }
-
-
 $(".choice-area").on( "click","input", function(){
 choicetext=[];
     $( "input:checked" ).each(function(i){
@@ -78,126 +70,85 @@ choicetext=[];
 });
 
 var choicetext=[];
-    $("#backid").hide();
+    $("#back_btn").hide();
     $("#submitid").hide();
+question_temp_id = Number($('#next_btn').data("question-id"));
+
+$(document).on('click','.action_button',function(){
+    url = "http://127.0.0.1:8000/candidate";
+    var button_action =  $(this).attr('id');
+
+if(button_action=="back_btn" || button_action=="next_btn")
+ submit_bool=false;
 
 
-
-function temp_click(){
-    $("#backid").show();
-
-if (test == 0){
-url = "http://127.0.0.1:8000/candidate"
-test= Number($("#tempid").data("question-id"));
-
-test = test+1;
-}
-else{
-test= test+1;
-url = "http://127.0.0.1:8000/candidate";
-}
 $.ajax({
     url:  url+"/exam_ajax_question/",
     type: "post",
-    data: { 'value':test  , 'choicetext':choicetext},
+    data: { 'temp_tbl_id':question_temp_id  , 'choicetext':choicetext,'button_action':button_action},
     success:function(serializeddata){
-    slno++
+    if(submit_bool)
+        window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
+
+    choicetext=[];
     output=serializeddata.temp_id
 
-
-if(parseInt('{{temp_tabl_q_count}}')==slno)
-    {
-
-
-    $("#tempid").replaceWith("<button id='tempid' type='button' class='btn btn-primary' onclick ='clickedButton()' name='submit' data-question-id ='{{questionchoices.temp_id}}' >Submit</button>");
-$(".question-area").html(slno+".&nbsp;"+serializeddata.question);
-     output=serializeddata.temp_id
-     choice_html = ""
-     if(serializeddata.choice_type == "Radio"){
-     for (var item in serializeddata.choices ){
-     choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp;"+choice_text+"<br>"
-     }
-     }
-     else{
-     for (var item in serializeddata.choices ){
-     choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp; "+choice_text+"<br>"
-     }
-     }
-     $(".choice-area").html(choice_html);
-
-     $("#tempid").data("question-id",serializeddata.temp_id);
-
+    if(!serializeddata.show_next_btn){
+    $("#next_btn").replaceWith("<button id='submit_btn' type='button' class='btn btn-primary action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Submit</button>");
+    submit_bool=true;
 
     }
     else{
-     $(".question-area").html(slno+".&nbsp;"+serializeddata.question);
+
+    $("#submit_btn").replaceWith("<button id='next_btn' type='button' class='btn btn-primary action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Next</button>");
+    submit_bool=false;
+    }
+
+     $(".question-area").html(serializeddata.question);
+     correct_answer = serializeddata.saved_choice;
+
      output=serializeddata.temp_id
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
-     choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp;"+choice_text+"<br>"
-     }
-     }
-     else{
-     for (var item in serializeddata.choices ){
-     choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' /> &nbsp;&nbsp; "+choice_text+"<br>"
-     }
-     }
-     $(".choice-area").html(choice_html);
 
-     $("#tempid").data("question-id",serializeddata.temp_id);
+     choice_text = serializeddata.choices[item];
+      var checked ="checked";
+    if(correct_answer == choice_text){
+         choice_html = choice_html + "<input type='radio' "+checked+"  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
         }
-
-
-
-    }
-   })
-       }
-
-
-$("#backid").on('click',function(){
-var url = "http://127.0.0.1:8000/candidate";
-backquestionid = test-1;
-$.ajax({
-    url:  url+"/exam_ajax_question/",
-    type: "post",
-    data: { 'value': backquestionid},
-    success:function(serializeddata){
-    //decrementing the serial number
-    slno--
-    output=serializeddata.temp_id
-     $(".question-area").html(slno+".&nbsp;"+serializeddata.question);
-     choice_html = ""
-     if(serializeddata.choice_type == "Radio"){
-     for (var item in serializeddata.choices ){
-     choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' /> &nbsp;&nbsp;"+choice_text+"<br>"
+        else{
+     choice_html = choice_html + "<input type='radio'  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+     }
      }
      }
      else{
      for (var item in serializeddata.choices ){
+
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' /> &nbsp;&nbsp; "+choice_text+"<br>"
+      console.log("testid-"+question_temp_id+" ::correct_answer-" +correct_answer+" ::choice_text-" +choice_text+"  ::")
+      var checked ="checked";
+    if(correct_answer == choice_text){
+        choice_html = choice_html + "<input type='checkbox' "+checked+" value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+}
+else{
+     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
      }
      }
+     }
+question_temp_id=serializeddata.temp_id
 
      $(".choice-area").html(choice_html);
-$("#tempid").replaceWith("<button id='tempid' type='button' class='btn btn-primary' onclick ='temp_click()' name='submit' data-question-id ='{{questionchoices.temp_id}}' >Next</button>");
+     $("#tempid").data("question-id",serializeddata.temp_id);
 
-     $("#backid").data("questionback-id",serializeddata.temp_id);
-     if ("{{questionchoices.temp_id}}" == serializeddata.temp_id )
-     {
-     $("#backid").hide();
-}
+if(serializeddata.show_back_btn)
+     $("#back_btn").show()
+else
+ $("#back_btn").hide()
+
     }
    })
-test=backquestionid;
        });
-
 
     //Timer Function
         var tim;

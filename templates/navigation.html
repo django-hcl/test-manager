@@ -26,12 +26,13 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{user.username}} </a></li>
             <li><a href="/admin/logout"><span class="glyphicon glyphicon-log-in"></span> Logout </a></li>
         </ul>
 
     </div>
   </nav>
+
 {% else %}
 <nav class="navbar navbar-inverse">
      <div class="container-fluid">
@@ -45,11 +46,15 @@
         </div>
 
         <ul class="nav navbar-nav navbar-right">
-            <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
+            <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{user.username}} </a></li>
             <li><a href="/admin/logout"><span class="glyphicon glyphicon-log-in"></span> Logout </a></li>
         </ul>
     </div>
 </nav>
+
+
+
+
 {% endif  %}
 {% endwith %}
   {% else %}
@@ -67,12 +72,26 @@
                 <ul class="nav navbar-nav">
                     <li class="active"><a href="{% url 'home' %}">Home</a></li>
                 </ul>
-                <ul class="nav navbar-nav navbar-right">
-                    <li><a href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                <ul  class="nav navbar-nav navbar-right">
+                    <li><a id="loginbutton" href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
                 </ul>
             </div>
         </div>
     </nav>
+
+<script>
+var x = location.href;
+var url = "http://127.0.0.1:8000/login/"
+          if(x == url){
+            $('#loginbutton').hide();
+}
+
+
+</script>
+
+
 {% endif %}
+
+
 
 

@@ -13,7 +13,11 @@ from administration.forms import TestsectionForm, TestForm
 from django.core import serializers
 from django.db.models import Avg, Max, Min,Count
 import pdb
+import datetime
 
+
+now = datetime.datetime.now()
+current_year = now.year
 
 @login_required
 def testlist(request):
