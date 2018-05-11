@@ -31,10 +31,10 @@
                 <div class="form-group">
                     <div class="row">
                         <div class=" col-lg-offset-8 col-lg-2 ">
-                            <button id="backid" type="button" class="btn btn-standard" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
+                            <button id="back_btn" type="button" class="btn btn-standard action_button" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
                         </div>
                         <div class=" col-sm-8 col-lg-2 ">
-                            <button id="tempid" type="button" class="btn btn-primary" name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
+                            <button id="next_btn" type="button" class="btn btn-primary action_button" name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
                         </div>
                     </div>
                 </div>
@@ -47,12 +47,13 @@
 
 var test=0;
 var test_id = window.location.pathname.match(/\d+/)[0];
-
 var initial_question = 0
 url ="";
+var submit_bool=false;
     function clickedButton()
             {
-                window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
+
+
     }
 $(".choice-area").on( "click","input", function(){
 choicetext=[];
@@ -63,96 +64,88 @@ choicetext=[];
 });
 
 var choicetext=[];
-    $("#backid").hide();
+    $("#back_btn").hide();
     $("#submitid").hide();
+question_temp_id = Number($('#next_btn').data("question-id"));
 
+$(document).on('click','.action_button',function(){
+    url = "http://127.0.0.1:8000/candidate";
+    var button_action =  $(this).attr('id');
 
+if(button_action=="back_btn" || button_action=="next_btn")
+ submit_bool=false;
 
-$("#tempid").on('click',function(){
-    $("#backid").show();
-
-if (test == 0){
-url = "http://127.0.0.1:8000/candidate"
-test= Number($(this).data("question-id"));
-test = test+1;
-}
-else{
-test= test+1;
-url = "http://127.0.0.1:8000/candidate";
-}
 
 $.ajax({
     url:  url+"/exam_ajax_question/",
     type: "post",
-    data: { 'value':test  , 'choicetext':choicetext},
+    data: { 'temp_tbl_id':question_temp_id  , 'choicetext':choicetext,'button_action':button_action},
     success:function(serializeddata){
+    if(submit_bool)
+        window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
+
+    choicetext=[];
     output=serializeddata.temp_id
-    if(serializeddata.temp_table_empty){
-    $("#tempid").replaceWith("<button id='tempid' type='button' class='btn btn-primary' onclick ='clickedButton()' name='submit' data-question-id ='{{questionchoices.temp_id}}' >Submit</button>");
+
+    if(!serializeddata.show_next_btn){
+    $("#next_btn").replaceWith("<button id='submit_btn' type='button' class='btn btn-primary action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Submit</button>");
+    submit_bool=true;
+
     }
     else{
+
+    $("#submit_btn").replaceWith("<button id='next_btn' type='button' class='btn btn-primary action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Next</button>");
+    submit_bool=false;
+    }
+
      $(".question-area").html(serializeddata.question);
+     correct_answer = serializeddata.saved_choice;
+
      output=serializeddata.temp_id
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
+
      choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+      var checked ="checked";
+    if(correct_answer == choice_text){
+         choice_html = choice_html + "<input type='radio' "+checked+"  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+        }
+        else{
+     choice_html = choice_html + "<input type='radio'  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+     }
      }
      }
      else{
      for (var item in serializeddata.choices ){
+
      choice_text = serializeddata.choices[item];
+      console.log("testid-"+question_temp_id+" ::correct_answer-" +correct_answer+" ::choice_text-" +choice_text+"  ::")
+      var checked ="checked";
+    if(correct_answer == choice_text){
+        choice_html = choice_html + "<input type='checkbox' "+checked+" value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
+}
+else{
      choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
      }
      }
-     $(".choice-area").html(choice_html);
+     }
+question_temp_id=serializeddata.temp_id
 
+     $(".choice-area").html(choice_html);
      $("#tempid").data("question-id",serializeddata.temp_id);
-        }
+
+if(serializeddata.show_back_btn)
+     $("#back_btn").show()
+else
+ $("#back_btn").hide()
+
     }
    })
        });
 
 
-$("#backid").on('click',function(){
-var url = "http://127.0.0.1:8000/candidate";
-backquestionid = test-1;
-$.ajax({
-    url:  url+"/exam_ajax_question/",
-    type: "post",
-    data: { 'value': backquestionid},
-    success:function(serializeddata){
-    output=serializeddata.temp_id
-     $(".question-area").html(serializeddata.question);
-     choice_html = ""
-     if(serializeddata.choice_type == "Radio"){
-     for (var item in serializeddata.choices ){
-     choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='radio'   value='"+choice_text+"' />"+choice_text+"<br>"
-     }
-     }
-     else{
-     for (var item in serializeddata.choices ){
-     choice_text = serializeddata.choices[item];
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' />"+choice_text+"<br>"
-     }
-     }
 
-     $(".choice-area").html(choice_html);
-
-     $("#backid").data("questionback-id",serializeddata.temp_id);
-     if ("{{questionchoices.temp_id}}" == serializeddata.temp_id )
-     {
-     $("#backid").hide();
-}
-
-    }
-   })
-
-
-test=backquestionid;
-       });
 
 </script>
 {% endblock %}

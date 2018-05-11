@@ -3,12 +3,12 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-        <div class="container">
+        <div class="container col-sm-8 col-lg-offset-2">
             <form method="POST" action="/admin/login">
             {% csrf_token %}
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                            <h3 class="panel-title"><strong>Login Form</strong></h3>
+                <div class="panel panel-primary ">
+                    <div class="panel-heading ">
+                            <h3 class="panel-title"><strong>Login </strong></h3>
                     </div>
                     <div class="panel-body">
                         <fieldset>
@@ -20,13 +20,15 @@
                                 </div>
                             </div>
                             {% endif %}
+                            <div class ="avatar">
+                                <i class ="material-icons"></i>
+                            </div>
                             <div class="form-group">
                                 <div class="row">
                                     <label class="control-label col-lg-offset-1 col-lg-2" for="Username">Username</label>
                                     <div class="col-lg-8">
                                         <input type="text" class="form-control" id="Username" placeholder="Enter username"
                                                        name="username" required>
-                                        <span id="clear" class="glyphicon glyphicon-remove-circle"></span>
                                     </div>
                                 </div>
                             </div>
@@ -43,6 +45,7 @@
                                 <div class="row">
                                     <div class="col-lg-offset-3 col-lg-6">
                                         <button type="submit" name="Submit" class="btn btn-primary">Submit</button>
+                                        <button id="clearbutton" type="button" name="Submit" class="btn btn-standard">Clear</button>
                                     </div>
                                 </div>
                             </div>
@@ -52,8 +55,8 @@
             </form>
         </div>
 <script>
-    $("#clear").click(function(){
-    $("#Username").val('');
+    $("#clearbutton").click(function(){
+    $(':input').val('');
 });
 </script>
 {% endblock %}

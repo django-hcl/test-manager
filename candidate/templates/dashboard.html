@@ -1,9 +1,16 @@
+{% load static %}
 <html xmlns="http://www.w3.org/1999/html">
 <head>
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap.min.css"/>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
+    <script src="{% static 'js/custom_js.js' %}"></script>
+
 </head>
 <body>
 
@@ -18,11 +25,17 @@
         </ul>
 
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> {{user.username}} </a></li>
+          <li><a href="#"><span class="glyphicon glyphicon-user"></span> {{user.username}} </a></li>
           <li><a href="/admin/logout"><span class="glyphicon glyphicon-log-in"></span> Logout </a></li>
         </ul>
         </div>
   </nav>
+  <div class="navbar navbar-default navbar-fixed-bottom">
+            <div class="container">
+      <p class="navbar-text pull-right">Copyright © {% now "Y" %} HCL Technologies Limited <a href="#">Contact Us</a></p>
+        </div>
+          </div>
+
 
  <div class="row">
      <div class="col-sm-3" >
@@ -33,6 +46,12 @@
         </ul>
         </div>
      </div>
+     <div class="navbar navbar-default navbar-fixed-bottom">
+            <div class="container">
+      <p class="navbar-text pull-right">Copyright © {% now "Y" %} HCL Technologies Limited <a href="#">Contact Us</a></p>
+        </div>
+          </div>
+
 
 
 {% block content %}
