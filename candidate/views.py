@@ -14,7 +14,7 @@ def dashboard(request):
 
 def index(request):
     current_user = request.user
-    active_test= TestMapping.objects.filter(testmap_userid=current_user)
+    active_test= TestMapping.objects.filter(testmap_userid=current_user,testmap_status__in=(0,3))
     return render(request,'candidate/active.html',{'active_test':active_test})
 
 
@@ -23,12 +23,22 @@ def instruction(request,id):
     test_name = TestMapping.objects.filter(pk=id).first()
     return render(request,'candidate/instruction.html',{'test_name':test_name})
 
-def pending(request):
-    return render(request,'candidate/inprogress.html')
+
+
+def rewrite(request,id):
+    test_name = TestMapping.objects.filter(pk=id).first()
+    return render(request,'candidate/exam_rewrite.html',{'test_name':test_name})
+
+
 def completed(request):
-    return render(request,'candidate/completed.html')
+    current_user = request.user
+    completed_test= TestMapping.objects.filter(testmap_userid=current_user,testmap_status__in=(1,2))
+    return render(request,'candidate/completed.html',{'completed_test':completed_test})
+
+
 def upcoming(request):
     return render(request,'candidate/upcoming.html')
+
 
 def profile(request):
 
@@ -111,6 +121,10 @@ def exam2(request):
         question = Question.objects.filter(question_id = temp_tabl.temptable_question.question_id ).first()
         tmpresponse_question = TempResponse.objects.filter(choice_question__question_id = question.question_id )
         print(tmpresponse_question)
+
+        test_status_object =TestMapping.objects.get(testmap_userid=current_user,testmap_testid=id)
+        test_status_object.testmap_status=3
+        test_status_object.save()
 
         if not candidate_choices:
             pass
@@ -243,11 +257,14 @@ def evaluate(request,test_id):
         print(total_questions)
         correct_answers = len(sample)
         candidate_percentage =int((correct_answers / total_questions)*100)
+        test_status_object=TestMapping.objects.get(testmap_userid=current_user,testmap_testid=test_id)
         if candidate_percentage > 40:
+            test_status_object.testmap_status=1
             result = "Pass"
         else:
+            test_status_object.testmap_status=2
             result = "Fail"
-
+        test_status_object.save()
         TempTable.objects.all().delete()
         TempResponse.objects.all().delete()
 

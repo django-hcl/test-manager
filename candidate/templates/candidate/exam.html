@@ -1,10 +1,16 @@
-{% extends 'dashboard.html' %}
 
 {% block content %}
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
 <div class="col-lg-7">
     <div class="panel panel-primary" >
-        <div class="panel-heading">Exam</div>
+        <div class="panel-heading">Exam
+            <div id="showtime" class="pull-right"> Time</div>
+        </div>
         <div class="panel-body">
             <form method="post" novalidate>
                 {% csrf_token %}
@@ -144,10 +150,46 @@ else
    })
        });
 
+    //Timer Function
+        var tim;
+        var min = '{{test.test_duration_mins}}';
+        var sec = '00';
+        var f = new Date();
 
+        function customSubmit(someValue){
 
+        	 document.questionForm.minute.value = min;
+        	 document.questionForm.second.value = sec;
+        	 document.questionForm.submit();
+        	 }
+        examTimer()
+        function examTimer() {
+
+            if (parseInt(sec) >0) {
+
+			    document.getElementById("showtime").innerHTML = "Time Remaining - "+min+" Min : " + sec+" Sec";
+                sec = parseInt(sec) - 1;
+                tim = setTimeout("examTimer()", 1000);
+            }
+            else {
+			    if (parseInt(min)==0 && parseInt(sec)==0){
+			    	document.getElementById("showtime").innerHTML = "Time Remaining :"+min+" Minutes ," + sec+" Seconds";
+				   //calling the submit function
+				     clickedButton();
+			     }
+
+                if (parseInt(sec) == 0) {
+				    document.getElementById("showtime").innerHTML = "Time Remaining :"+min+" Minutes ," + sec+" Seconds";
+                    min = parseInt(min) - 1;
+					sec=59;
+                    tim = setTimeout("examTimer()", 1000);
+                }
+
+            }
+        }
 
 </script>
+
 {% endblock %}
 
 

@@ -64,7 +64,7 @@ class TestMapping(BaseModel):
     testmap_id = models.AutoField(primary_key=True)
     testmap_testid = models.ForeignKey(Test, on_delete=models.CASCADE)
     testmap_userid = models.ForeignKey(User, on_delete=models.CASCADE)
-
+    testmap_status = models.IntegerField(default=0)
 
 class Complexity(BaseModel):
     complex_id = models.AutoField(primary_key=True)
@@ -122,6 +122,7 @@ class TempResponse(models.Model):
     choice_text = models.CharField(max_length=500)
     temp_response_test =  models.ForeignKey(Test,on_delete=models.CASCADE,null=True,blank=True)
     temp_response_created_date = models.DateTimeField(auto_now_add=True,editable=False)
+   # temp_counts = models.IntegerField(max_length=2)
 
     def __str__(self):
        return  str(self.choice_text)
