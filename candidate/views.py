@@ -98,6 +98,10 @@ def exam(request,id=None):
         questionchoices['choices'] = [ choice.choice_text for choice in choices ]
         questionchoices['choice_type'] = temp_tabl.temptable_question.question_type.questiontype_name
         questionchoices['temp_id'] =  temp_tabl.temp_id
+
+        test_status_object =TestMapping.objects.get(testmap_userid=current_user,testmap_testid=id)
+        test_status_object.testmap_status=3
+        test_status_object.save()
     return render(request,'candidate/exam.html',{'questionchoices':questionchoices,'test':test,'choices':choices})
    except Exception as e:
      print(e.args)
@@ -112,29 +116,23 @@ def exam2(request):
     if request.is_ajax():
         response={}
         temp_tbl_id = request.POST['temp_tbl_id']
-        print("ID:"+str(temp_tbl_id))
         candidate_choices= request.POST.getlist("choicetext[]")
 
         temp_tabl = TempTable.objects.filter(temp_id=temp_tbl_id).first()
         test_id = Test.objects.filter(pk = temp_tabl.temptable_test.test_id ).first()
-
         question = Question.objects.filter(question_id = temp_tabl.temptable_question.question_id ).first()
         tmpresponse_question = TempResponse.objects.filter(choice_question__question_id = question.question_id )
-        print(tmpresponse_question)
-
-        test_status_object =TestMapping.objects.get(testmap_userid=current_user,testmap_testid=id)
-        test_status_object.testmap_status=3
-        test_status_object.save()
-
         if not candidate_choices:
             pass
         else:
+            if(TempResponse.objects.filter(choice_question__question_id = question.question_id ).count() >1 or len(candidate_choices)>1):
+                 TempResponse.objects.filter(choice_question__question_id = question.question_id ).delete()
+                 tmpresponse_question = TempResponse.objects.filter(choice_question__question_id = question.question_id )
             for eachchoice in candidate_choices:
                 print("eachchoice "+str(eachchoice))
                 if tmpresponse_question:
                     #update choice
                     tmpresponse = TempResponse.objects.get(choice_question__question_id = question.question_id )
-
                     tmpresponse.choice_text = eachchoice
                     tmpresponse.save()
                 else:
@@ -164,12 +162,16 @@ def exam2(request):
             response['temp_id'] =  question_id_pick.temp_id
             response['test_id'] = test_id.test_id
 
-            tmpresponse_question = TempResponse.objects.filter(choice_question__question_id = question_id_pick.temptable_question.question_id ).first()
+            tmpresponse_question = TempResponse.objects.filter(choice_question__question_id = question_id_pick.temptable_question.question_id )
 
 
             response['saved_choice'] = ""
             if tmpresponse_question:
-                response['saved_choice'] = tmpresponse_question.choice_text
+                saved_choice=[]
+                for eachchoice in tmpresponse_question:
+                    saved_choice.append(eachchoice.choice_text)
+                response['saved_choice'] =saved_choice
+
 
             response['show_next_btn']= TempTable.objects.filter(temp_id=temp_id_to_pick+1).exists()
             response['show_back_btn']= TempTable.objects.filter(temp_id=temp_id_to_pick-1).exists()
@@ -238,13 +240,13 @@ def exam2(request):
 
 
 def evaluate(request,test_id):
-    try:
+     try:
         sample=[]
         current_user = request.user
         user = User.objects.filter(username = current_user).first()
         temp_response_list =TempResponse.objects.filter(temp_response_user__id=user.id, temp_response_test__test_id=test_id)\
-            .values('choice_question__question_id', 'choice_text')
-        print(temp_response_list)
+            .values('choice_question__question_id', 'choice_text').distinct()
+        #print(temp_response_list)
         for temp_resp in temp_response_list:
             for key,value in temp_resp.items():
                 if key == 'choice_question__question_id':
@@ -253,12 +255,14 @@ def evaluate(request,test_id):
                     choice_list = [x for x in temp_response_list if x in ques_choice_list ]
                     if choice_list:
                         sample.append(choice_list)
-        total_questions = len(TempTable.objects.all())
+
+        total_questions = len(set(TempTable.objects.all()))
         print(total_questions)
         correct_answers = len(sample)
+        print(correct_answers)
         candidate_percentage =int((correct_answers / total_questions)*100)
         test_status_object=TestMapping.objects.get(testmap_userid=current_user,testmap_testid=test_id)
-        if candidate_percentage > 40:
+        if candidate_percentage > 75:
             test_status_object.testmap_status=1
             result = "Pass"
         else:
@@ -269,7 +273,7 @@ def evaluate(request,test_id):
         TempResponse.objects.all().delete()
 
         return render(request,'candidate/evaluate.html',{'correct_answers':correct_answers,'result':result,'total_questions':total_questions})
-    except Exception as e:
-            return render(request,'candidate/evaluate.html')
+     except Exception as e:
+              return render(request,'candidate/evaluate.html')
 
 
