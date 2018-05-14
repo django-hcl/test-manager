@@ -81,7 +81,7 @@ $(document).on('click','.action_button',function(){
 if(button_action=="back_btn" || button_action=="next_btn")
  submit_bool=false;
 
-
+console.log("choicetext::"+choicetext)
 $.ajax({
     url:  url+"/exam_ajax_question/",
     type: "post",
@@ -106,14 +106,14 @@ $.ajax({
 
      $(".question-area").html(serializeddata.question);
      correct_answer = serializeddata.saved_choice;
-
-     output=serializeddata.temp_id
+        output=serializeddata.temp_id
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
 
      choice_text = serializeddata.choices[item];
       var checked ="checked";
+
     if(correct_answer == choice_text){
          choice_html = choice_html + "<input type='radio' "+checked+"  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
         }
@@ -126,14 +126,11 @@ $.ajax({
      for (var item in serializeddata.choices ){
 
      choice_text = serializeddata.choices[item];
-      console.log("testid-"+question_temp_id+" ::correct_answer-" +correct_answer+" ::choice_text-" +choice_text+"  ::")
-      var checked ="checked";
-    if(correct_answer == choice_text){
-        choice_html = choice_html + "<input type='checkbox' "+checked+" value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
-}
-else{
-     choice_html = choice_html + "<input type='checkbox'  value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
-     }
+
+      var checked =" ";
+   for (var each_correct_choice in correct_answer)
+   {   if(correct_answer[each_correct_choice] == choice_text){ checked ="checked"   }    }
+     choice_html = choice_html + "<input type='checkbox' "+checked+" value='"+choice_text+"' name ='choices[]' />"+choice_text+"<br>"
      }
      }
 question_temp_id=serializeddata.temp_id
