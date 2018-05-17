@@ -3,6 +3,7 @@
 {% block title %} Edit Question{% endblock %}
 
 {% block content %}
+<div class="container">
 <div class="panel panel-primary" >
     <div class="panel-heading">Edit Question </div>
     <div class="panel-body">
@@ -13,7 +14,7 @@
             <div class="form-group">
                 <div class="row">
                     <label class="control-label col-lg-2" >Question</label>
-                    <div class="col-lg-10">
+                    <div class="col-lg-6">
                         {{question_edit_form.question_text}}
                     </div>
                 </div>
@@ -22,7 +23,7 @@
             <div class="form-group">
                 <div class="row">
                     <label class="control-label col-lg-2" >Complexity Level</label>
-                    <div class="col-lg-10">
+                    <div class="col-lg-6">
                         {{question_edit_form.question_complex}}
                     </div>
                 </div>
@@ -31,7 +32,7 @@
             <div class="form-group">
                 <div class="row">
                     <label class="control-label col-lg-2" >Question Type</label>
-                    <div class="col-lg-10">
+                    <div class="col-lg-6">
                         {{question_edit_form.question_type}}
                     </div>
                 </div>
@@ -40,7 +41,7 @@
             <div class="form-group">
                 <div class="row">
                     <label class="control-label col-lg-2" >Section</label>
-                    <div class="col-lg-10">
+                    <div class="col-lg-6">
                         {{question_edit_form.question_section}}
                     </div>
                 </div>
@@ -53,7 +54,7 @@
                  <div class="col-lg-2">
 
                  </div>
-                 <div class="col-lg-offset-5 col-lg-1">
+                 <div class="col-lg-offset-4 col-lg-1">
                    <input type="button" class="btn btn-primary" id="addrow" name="addrow" value="Add Choices">
                  </div>
              </div>
@@ -95,6 +96,7 @@
 
              </form>
         </div>
+    </div>
     </div>
 
 <div class="modal fade" id="myModal" role="dialog" >

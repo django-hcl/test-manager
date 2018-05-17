@@ -240,40 +240,66 @@ def exam2(request):
 
 
 def evaluate(request,test_id):
-     try:
-        sample=[]
+    # try:
+
         current_user = request.user
         user = User.objects.filter(username = current_user).first()
         temp_response_list =TempResponse.objects.filter(temp_response_user__id=user.id, temp_response_test__test_id=test_id)\
-            .values('choice_question__question_id', 'choice_text').distinct()
+            .values('choice_question__question_id').distinct()
         #print(temp_response_list)
+        marks=0
+        correct_answers=0
+        result_list={}
+        print(temp_response_list)
         for temp_resp in temp_response_list:
+            print()
             for key,value in temp_resp.items():
+                # print()
+
                 if key == 'choice_question__question_id':
-                    ques_choice_list = QuestionChoice.objects.filter(choice_question__question_id=value, choice_is_correct=True)\
-                     .values('choice_question__question_id', 'choice_text')
-                    choice_list = [x for x in temp_response_list if x in ques_choice_list ]
-                    if choice_list:
-                        sample.append(choice_list)
+                    temp_count= TempResponse.objects.filter(choice_question__question_id=value, temp_response_test__test_id=test_id).count()
+                    question_count= QuestionChoice.objects.filter(choice_question__question_id=value,choice_is_correct=True).count()
+
+                    if temp_count == question_count:
+                        temp_response =TempResponse.objects.filter(choice_question__question_id=value, temp_response_test__test_id=test_id)\
+                         .values('choice_question__question_id', 'choice_text').distinct()
+                        ques_choice_list = QuestionChoice.objects.filter(choice_question__question_id=value,choice_is_correct=True)\
+                         .values('choice_question__question_id', 'choice_text')
+
+                        #choice_marks=1/len(ques_choice_list)
+                        count=0
+                        for x in ques_choice_list:
+                            if x in temp_response:
+                              count=count+1
+                              #print(count)
+                            else:
+                                break
+                        if  len(ques_choice_list)==count:
+                            print(len(ques_choice_list))
+                            print(count)
+                            print()
+                            correct_answers=correct_answers+1
+                            print(correct_answers)
+
 
         total_questions = len(set(TempTable.objects.all()))
-        print(total_questions)
-        correct_answers = len(sample)
-        print(correct_answers)
+       # print(total_questions)
+        #correct_answers = len(sample)
+        #print(correct_answers)
         candidate_percentage =int((correct_answers / total_questions)*100)
         test_status_object=TestMapping.objects.get(testmap_userid=current_user,testmap_testid=test_id)
         if candidate_percentage > 75:
-            test_status_object.testmap_status=1
+            test_status_object.testmap_status = 1
             result = "Pass"
         else:
-            test_status_object.testmap_status=2
+            test_status_object.testmap_status = 2
             result = "Fail"
         test_status_object.save()
         TempTable.objects.all().delete()
         TempResponse.objects.all().delete()
 
         return render(request,'candidate/evaluate.html',{'correct_answers':correct_answers,'result':result,'total_questions':total_questions})
-     except Exception as e:
-              return render(request,'candidate/evaluate.html')
+    # except Exception as e:
+    #         return render(request,'candidate/evaluate.html')
 
 

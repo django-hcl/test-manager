@@ -3,53 +3,54 @@
 {% block title %} Edit User {% endblock %}
 
 {% block content %}
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Edit User</div>
+        <div class="panel-body ">
 
-<div class="panel panel-primary" >
-    <div class="panel-heading">Edit User</div>
-    <div class="panel-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
 
-        <form method="post" novalidate>
-            {% csrf_token %}
+                <div class="form-group">
+                    <label class="control-label col-lg-2" >User ID</label>
+                    <div class="col-lg-6">
+                        {{customuserform.custom_userid}}
+                    </div>
+                </div><br><br><br>
 
-            <div class="form-group">
-                <label class="control-label col-lg-2" >User ID</label>
-                <div class="col-lg-10">
-                    {{customuserform.custom_userid}}
-                </div>
-            </div><br><br><br>
+                <div class="form-group">
+                    <label class="control-label col-lg-2" >Username</label>
+                    <div class="col-lg-6">
+                        {{user_form.username}}
+                    </div>
+                </div><br><br>
 
-            <div class="form-group">
-                <label class="control-label col-lg-2" >Username</label>
-                <div class="col-lg-10">
-                    {{user_form.username}}
-                </div>
-            </div><br><br>
+                <div class="form-group">
+                    <label class="control-label col-lg-2" >Email</label>
+                    <div class="col-lg-6">
+                        {{user_form.email}}
+                    </div>
+                </div><br><br>
 
-            <div class="form-group">
-                <label class="control-label col-lg-2" >Email</label>
-                <div class="col-lg-10">
-                    {{user_form.email}}
-                </div>
-            </div><br><br>
+                <div class="form-group">
+                    <label class="control-label col-lg-2" >Role ID</label>
+                    <div class="col-lg-6">
+                        {{ customuserform.custom_roleid}}
+                    </div>
+                </div><br><br>
 
-            <div class="form-group">
-                <label class="control-label col-lg-2" >Role ID</label>
-                <div class="col-lg-10">
-                    {{ customuserform.custom_roleid}}
-                </div>
-            </div><br><br>
-
-            <div class="form-group">
-                <div class="row">
-                <div class="col-lg-offset-2 col-lg-1">
-                    <a href="/admin/user" class="btn btn-danger" role="button">Cancel</a>
-                </div>
-                <div class=" col-lg-2">
-                    <button type="submit" class="btn btn-primary" name="submit">Update</button>
-                </div>
-                </div>
-            </div><br><br>
-        </form>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-lg-1">
+                            <a href="/admin/user" class="btn btn-danger" role="button">Cancel</a>
+                        </div>
+                        <div class=" col-lg-2">
+                            <button type="submit" class="btn btn-primary" name="submit">Update</button>
+                        </div>
+                    </div>
+                </div><br><br>
+            </form>
+        </div>
     </div>
 </div>
 

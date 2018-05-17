@@ -3,42 +3,47 @@
 {% block title %} Add Question Type {% endblock %}
 
 {% block content %}
-
-<div class="panel panel-primary" >
-   <div class="panel-heading">Add Question Type</div>
-   <div class="panel-body">
-      <form method="post" novalidate>
-         {% csrf_token %}
-         <div class="form-group">
-             <div class="row">
-                <label class="control-label col-lg-2" >Question Type</label>
-                <div class="col-lg-10">
-                   {{question_type_form.questiontype_name}}
-                </div>
-            </div>
-         </div>
-
-         <div class="form-group">
-             <div class="row">
-                <label class="control-label col-lg-2" >Question Type Description</label>
-                <div class="col-lg-10">
-                   {{question_type_form.questiontype_description}}
-                </div>
-             </div>
-         </div>
-
-          <div class="form-group">
-              <div class="row">
-                    <div class="col-lg-offset-2 col-lg-1">
-                        <a href="/admin/questiontype" class="btn btn-danger" role="button">Cancel</a>
+<div class="container">
+    <div class="panel panel-primary" >
+        <div class="panel-heading">Add Question Type</div>
+        <div class="panel-body">
+            <form method="post" novalidate>
+                {% csrf_token %}
+                {% if question_type_exists_error %}
+                <div class="row" >
+                    <div class="col-sm-offset-2 col-sm-6 alert alert-danger">
+                        <strong>Alert!</strong> Entered type already exists.
                     </div>
-                    <div class=" col-lg-6">
-                        <button type="submit" class="btn btn-primary" name="submit">Add</button>
+                </div>
+                {% endif %}
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Question Type</label>
+                        <div class="col-lg-6">
+                            {{question_type_form.questiontype_name}}
+                        </div>
                     </div>
-              </div>
-          </div>
-      </form>
-   </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Question Type Description</label>
+                        <div class="col-lg-6">
+                            {{question_type_form.questiontype_description}}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-lg-6">
+                            <button id="clearbutton" type="reset" name="clear" class="btn btn-standard">Clear</button>
+                            <a href="/admin/questiontype" class="btn btn-danger" role="button">Cancel</a>
+                            <button type="submit" name="Submit" class="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
-
 {% endblock %}

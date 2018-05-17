@@ -6,44 +6,45 @@
 {% block content %}
 
 
+<div class="container">
+    <div class="panel panel-primary">
+        <div class="panel-heading">Section List</div>
+        <div class="panel-body">
 
-<div class="panel panel-primary">
-    <div class="panel-heading">Section List</div>
-    <div class="panel-body">
-
-        <div class="row">
-            <div class="col-lg-12 text-right">
-                <a href="/admin/test/section/add" class="btn btn-primary" role="button">Add Section</a>
+            <div class="row">
+                <div class="pull-right col-lg-2">
+                    <a href="/admin/test/section/add" class="btn btn-primary" role="button">Add Section</a>
+                </div>
             </div>
+            <br>
+            <table id ="section_table"class="table table-bordered data_table" width="100%" cellspacing="0">
+                <thead>
+                <tr>
+                    <th>Sl No</th>
+                    <th>Section Name</th>
+                    <th>Description</th>
+                    <th>Created By</th>
+                    <th>Created On</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for section in section_list %}
+                <tr class="section_{{ section.section_id }}  {{section.is_active|yesno:'active_row,inactive_row'}}" data-section_id="{{ section.section_id }}">
+                    <td ><span>{{ forloop.counter }}</span></td>
+                    <td>{{ section.section_name }}</td>
+                    <td>{{ section.section_description }}</td>
+                    <td>{{ section.section_createdby }}</td>
+                    <td>{{ section.created_date|date:"SHORT_DATE_FORMAT" }}</td>
+                    <td><a class="edit-icon" href="/admin/test/section/edit/{{ section.section_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
+                        <a><span class="glyphicon {{section.is_active|yesno:'glyphicon-trash, glyphicon-check'}}"></span></a></td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
         </div>
-        <br>
-        <table id ="section_table"class="table table-bordered data_table" width="100%" cellspacing="0">
-            <thead>
-            <tr>
-                <th>Sl No</th>
-                <th>Section Name</th>
-                <th>Description</th>
-                <th>Created By</th>
-                <th>Created On</th>
-                <th>Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-
-            {% for section in section_list %}
-            <tr class="section_{{ section.section_id }}  {{section.is_active|yesno:'active_row,inactive_row'}}" data-section_id="{{ section.section_id }}">
-                <td ><span>{{ forloop.counter }}</span></td>
-                <td>{{ section.section_name }}</td>
-                <td>{{ section.section_description }}</td>
-                <td>{{ section.section_createdby }}</td>
-                <td>{{ section.created_date|date:"SHORT_DATE_FORMAT" }}</td>
-                <td><a class="edit-icon" href="/admin/test/section/edit/{{ section.section_id }}"><span class="glyphicon glyphicon-pencil"></span></a>
-                    <a><span class="glyphicon {{section.is_active|yesno:'glyphicon-trash, glyphicon-check'}}"></span></a></td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
     </div>
 </div>
 

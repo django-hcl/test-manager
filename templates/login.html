@@ -45,7 +45,7 @@
                                 <div class="row">
                                     <div class="col-lg-offset-3 col-lg-6">
                                         <button type="submit" name="Submit" class="btn btn-primary">Submit</button>
-                                        <button id="clearbutton" type="button" name="Submit" class="btn btn-standard">Clear</button>
+                                        <button id="clearbutton" type="reset" name="Submit" class="btn btn-standard">Clear</button>
                                     </div>
                                 </div>
                             </div>
@@ -54,9 +54,5 @@
                 </div>
             </form>
         </div>
-<script>
-    $("#clearbutton").click(function(){
-    $(':input').val('');
-});
-</script>
+
 {% endblock %}

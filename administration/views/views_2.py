@@ -37,7 +37,7 @@ def addtest(request):
         form_action = request.POST['form_action']
         test = Test()
         if form_action == 'addtest':
-            recordexists = Test.objects.filter(test_name=request.POST.get('testname')).first()
+            recordexists = Test.objects.filter(test_name__iexact=request.POST.get('testname')).first()
             if recordexists:
                 print("entered addtest")
                 existingtesterror = True
@@ -62,19 +62,24 @@ def addtest(request):
                 return HttpResponseRedirect(reverse('test_list'))
         else:
             print("entered validation else1")
-            recordexists = Testsection.objects.filter(section_name=request.POST.get('sectionname'))
+            recordexists = Testsection.objects.filter(section_name__iexact=request.POST.get('sectionname'))
             if recordexists:
                 existingsectionerror = True
-                return render(request, 'administration/addtest.html',{'existingsectionerror': existingsectionerror})
+                return render(request, 'administration/addtest.html',{'existingsectionerror': existingsectionerror,
+                                                                      'duplicate_section_list':duplicate_section_list})
             else:
                 print("entered addsection 2")
                 section = Testsection()
                 section.section_name = re.sub(' +', ' ', request.POST.get('sectionname').strip())
+                section.section_name = section.section_name[:1].upper() + section.section_name[1:]
                 section.section_description = re.sub(' +', ' ', request.POST.get('sectiondescription').strip())
                 section.section_createdby = User.objects.get(pk=current_user)
                 section.section_created_date = datetime.datetime.now()
                 section.save()
+                #return render(request, 'administration/addtest.html', {'testsection_record_list': testsection_record_list,
+                                                                       #'duplicate_section_list':duplicate_section_list})
                 return HttpResponseRedirect(reverse('add_test'))
+
     else:
         return render(request, 'administration/addtest.html', {'testsection_record_list': testsection_record_list,
                                                                'duplicate_section_list':duplicate_section_list})
@@ -117,12 +122,13 @@ def addsection(request):
     if request.method == 'POST':
         form = TestsectionForm(request.POST)
         if form.is_valid():
-            recordexists = Testsection.objects.filter(section_name=request.POST.get('sectionname'))
+            recordexists = Testsection.objects.filter(section_name__iexact=request.POST.get('section_name'))
             if recordexists:
                 existingerror = True
-                return render(request, 'administration/addsection.html', {'existingerror': existingerror})
+                return render(request, 'administration/addsection.html', {'existingerror': existingerror,'form':form})
             else:
                 section.section_name = re.sub(' +', ' ', request.POST.get('section_name').strip())
+                section.section_name = section.section_name[:1].upper() + section.section_name[1:]
                 section.section_description = re.sub(' +', ' ', request.POST.get('section_description').strip())
                 section.section_createdby = User.objects.get(pk=current_user)
                 section.section_created_date = datetime.datetime.now()
@@ -250,19 +256,22 @@ def testuser_ajax_userid(request,user_id):
     datalist=[]
     candidateuserlist = Customuser.objects.filter(custom_roleid__role_name="Candidate")
     enabled = "False"
-    if request.is_ajax():
-        id = request.POST['id']
+    if user_id:
+        id =user_id# request.POST['id']
         enabled = "True"
         customuser = Customuser.objects.filter(pk=id).first()
         test_mapping_list = TestMapping.objects.filter(testmap_userid__username=customuser)
+
         for test in test_mapping_list:
             data ={}
             data["testname"]= test.testmap_testid.test_name
             data["createdby"]= request.user.username
             datalist.append(data)
-        serializeddata = json.dumps(datalist)
-        return HttpResponse(serializeddata, content_type='application/json')
-    return render(request, 'administration/assessmentmanagement.html', {'candidateuserlist': candidateuserlist,'enabled':enabled})
+        selected_user=user_id
+        #serializeddata = json.dumps(datalist)
+        #return HttpResponse(serializeddata, content_type='application/json')
+
+    return render(request, 'administration/assessmentmanagement.html', {'candidateuserlist': candidateuserlist,'enabled':enabled,"selected_user":selected_user,"data":datalist})
 
 
 

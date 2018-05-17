@@ -3,43 +3,45 @@
 {% block title %} Edit Role {% endblock %}
 
 {% block content %}
-<div class="panel panel-primary" >
-    <div class="panel-heading">Edit Role</div>
-    <div class="panel-body">
+<div class="container">
+    <div class="panel panel-primary" >
+        <div class="panel-heading">Edit Role</div>
+        <div class="panel-body">
 
-        <form method="post" novalidate>
-            {% csrf_token %}
+            <form method="post" novalidate>
+                {% csrf_token %}
 
-            <div class="form-group">
-                <div class="row">
-                    <label class="control-label col-lg-2" >Role Name</label>
-                    <div class="col-lg-10">
-                        {{role_form.role_name}}
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Role Name</label>
+                        <div class="col-lg-6">
+                            {{role_form.role_name}}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="row">
-                    <label class="control-label col-lg-2" >Role Description</label>
-                    <div class="col-lg-10">
-                        {{role_form.role_description}}
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Role Description</label>
+                        <div class="col-lg-6">
+                            {{role_form.role_description}}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="row">
-                <div class="col-lg-offset-2 col-lg-1">
-                    <a href="/admin/role" class="btn btn-danger" role="button">Cancel</a>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-lg-1">
+                            <a href="/admin/role" class="btn btn-danger" role="button">Cancel</a>
+                        </div>
+                        <div class=" col-lg-2">
+                            <button type="submit" class="btn btn-primary" name="submit">Update</button>
+                        </div>
+                    </div>
                 </div>
-                <div class=" col-lg-2">
-                    <button type="submit" class="btn btn-primary" name="submit">Update</button>
-                </div>
-                </div>
-            </div>
             </form>
         </div>
     </div>
+</div>
 
 {% endblock %}

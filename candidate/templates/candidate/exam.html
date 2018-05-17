@@ -4,9 +4,30 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
+
+    .center {
+    margin: auto;
+    width: 50%;
 
 
-<div class="col-lg-7">
+    padding: 10px;
+}
+    .panel-body{
+    margin:20px;
+    background: linear-gradient(to top left, #006699 0%, #33cccc 100%);
+    border-radius: 25px;
+    background-position: left top;
+    background-repeat: repeat;
+    padding: 20px;
+    }
+    .btn{
+     background:#8ab6e2
+    }
+
+</style>
+<div class="center">
+
     <div class="panel panel-primary" >
         <div class="panel-heading">Exam
             <div id="showtime" class="pull-right"> Time</div>
@@ -15,12 +36,12 @@
             <form method="post" novalidate>
                 {% csrf_token %}
                 <div class="form-group">
-                    <div id="questionid " class="row">
+                    <div id="questionid " class="row questionid">
                         <label class="control-label col-lg-12 question-area">{{questionchoices.question}}</label>
                     </div>
                 </div>
                 <div class="form-group col-lg-7" >
-                    <div class="row choice-area" >
+                    <div class="row choice-area" style="height:25%" >
 
                         {% for val in questionchoices.choices %}
                         {% if questionchoices.choice_type == "Radio"%}
@@ -37,10 +58,10 @@
                 <div class="form-group">
                     <div class="row">
                         <div class=" col-lg-offset-8 col-lg-2 ">
-                            <button id="back_btn" type="button" class="btn btn-standard action_button" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
+                            <button id="back_btn" type="button" class="btn  action_button" name="submit" data-questionback-id ="{{questionchoices.temp_id}}" >Back</button>
                         </div>
                         <div class=" col-sm-8 col-lg-2 ">
-                            <button id="next_btn" type="button" class="btn btn-primary action_button" name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
+                            <button id="next_btn" type="button" class="btn  action_button" name="submit" data-question-id ="{{questionchoices.temp_id}}" >Next</button>
                         </div>
                     </div>
                 </div>
@@ -49,6 +70,7 @@
         </div>
     </div>
 </div>
+
 <script>
 
 var test=0;
@@ -81,7 +103,7 @@ $(document).on('click','.action_button',function(){
 if(button_action=="back_btn" || button_action=="next_btn")
  submit_bool=false;
 
-console.log("choicetext::"+choicetext)
+console.log("",choicetext)
 $.ajax({
     url:  url+"/exam_ajax_question/",
     type: "post",
@@ -94,19 +116,20 @@ $.ajax({
     output=serializeddata.temp_id
 
     if(!serializeddata.show_next_btn){
-    $("#next_btn").replaceWith("<button id='submit_btn' type='button' class='btn btn-primary action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Submit</button>");
+    $("#next_btn").replaceWith("<button id='submit_btn' type='button' class='btn  action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Submit</button>");
     submit_bool=true;
 
     }
     else{
 
-    $("#submit_btn").replaceWith("<button id='next_btn' type='button' class='btn btn-primary action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Next</button>");
+    $("#submit_btn").replaceWith("<button id='next_btn' type='button' class='btn  action_button'  name='submit' data-question-id ='{{questionchoices.temp_id}}' >Next</button>");
     submit_bool=false;
     }
 
      $(".question-area").html(serializeddata.question);
      correct_answer = serializeddata.saved_choice;
-        output=serializeddata.temp_id
+    console.log("correct_answer ::"+correct_answer)
+     output=serializeddata.temp_id
      choice_html = ""
      if(serializeddata.choice_type == "Radio"){
      for (var item in serializeddata.choices ){
@@ -126,7 +149,7 @@ $.ajax({
      for (var item in serializeddata.choices ){
 
      choice_text = serializeddata.choices[item];
-
+      console.log("testid-"+question_temp_id+" ::correct_answer-" +correct_answer+" ::choice_text-" +choice_text+"  ::")
       var checked =" ";
    for (var each_correct_choice in correct_answer)
    {   if(correct_answer[each_correct_choice] == choice_text){ checked ="checked"   }    }
@@ -172,7 +195,7 @@ else
 			    if (parseInt(min)==0 && parseInt(sec)==0){
 			    	document.getElementById("showtime").innerHTML = "Time Remaining :"+min+" Minutes ," + sec+" Seconds";
 				   //calling the submit function
-				     clickedButton();
+				    window.location = 'http://127.0.0.1:8000/candidate/evaluate/'+test_id;
 			     }
 
                 if (parseInt(sec) == 0) {

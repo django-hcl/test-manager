@@ -4,19 +4,51 @@
 
 {% block content %}
 
-<div class="panel panel-primary">
-    <div class="panel-heading">Add Section</div>
-    <div class="panel-body">
-        <form method="post" novalidate>
-            {% csrf_token %}
-            {{form.as_p}}
+
+<div class="container">
+    <div class="panel panel-primary" >
+        <div class="panel-heading">Add Section</div>
+        <div class="panel-body">
+            {% if existingerror %}
+
             <div class="form-group">
-                <div class="col-sm-text-left">
-                    <a href="/admin/test/section" class="btn btn-default" role="button">Cancel</a>
-                    <button type="submit" class="btn btn-success" name="" value="">submit</button>
+                <div class="alert alert-danger col-sm-offset-3 col-sm-8">
+                    <strong>Alert!</strong>Entered name already exists.
                 </div>
             </div>
-        </form>
+            {%endif %}
+            <form method="post" novalidate>
+                {% csrf_token %}
+
+
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Section Name</label>
+                        <div class="col-lg-6">
+                            {{form.section_name}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Section Description</label>
+                        <div class="col-lg-6">
+                            {{form.section_description}}
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-lg-6">
+                            <button id="clearbutton" type="reset" name="clear" class="btn btn-standard">Clear</button>
+                            <a href="/admin/test/section" class="btn btn-danger" role="button">Cancel</a>
+                            <button type="submit" name="Submit" class="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

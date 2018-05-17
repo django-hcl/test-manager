@@ -3,43 +3,44 @@
 {% block title %} Edit Complexity {% endblock %}
 
 {% block content %}
-<div class="panel panel-primary" >
-    <div class="panel-heading">Edit Complexity</div>
-    <div class="panel-body">
+<div class="container">
+    <div class="panel panel-primary" >
+        <div class="panel-heading">Edit Complexity</div>
+        <div class="panel-body">
 
-        <form method="post" novalidate>
-            {% csrf_token %}
+            <form method="post" novalidate>
+                {% csrf_token %}
 
-            <div class="form-group">
-                <div class="row">
-                    <label class="control-label col-lg-2" >Complexity Name</label>
-                    <div class="col-lg-10">
-                        {{complexity_edit_form.complex_name}}
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Complexity Name</label>
+                        <div class="col-lg-6">
+                            {{complexity_edit_form.complex_name}}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="row">
-                    <label class="control-label col-lg-2" >Complexity Description</label>
-                    <div class="col-lg-10">
-                        {{complexity_edit_form.complex_description}}
+                <div class="form-group">
+                    <div class="row">
+                        <label class="control-label col-lg-2" >Complexity Description</label>
+                        <div class="col-lg-6">
+                            {{complexity_edit_form.complex_description}}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-lg-offset-2 col-lg-1">
-                        <a href="/admin/complexity" class="btn btn-danger" role="button">Cancel</a>
-                    </div>
-                    <div class=" col-lg-6">
-                        <button type="submit" class="btn btn-primary" name="submit">Update</button>
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col-lg-offset-2 col-lg-1">
+                            <a href="/admin/complexity" class="btn btn-danger" role="button">Cancel</a>
+                        </div>
+                        <div class=" col-lg-6">
+                            <button type="submit" class="btn btn-primary" name="submit">Update</button>
+                        </div>
                     </div>
                 </div>
-            </div>
             </form>
         </div>
     </div>
-
+</div>
 {% endblock %}

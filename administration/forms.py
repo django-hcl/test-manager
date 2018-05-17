@@ -25,23 +25,18 @@ class TestForm(ModelForm):
 
 class TestsectionForm(ModelForm):
     section_name = forms.CharField(
-        required=True,
-        label='Section Name',
-        max_length=15,
-        widget=forms.TextInput(attrs={'class':'form-control input-sm', 'placeholder':'Enter Section Name'})
+        widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter Section Name'})
     )
     section_description = forms.CharField(
-        required=True,
-        label='Section Name',
-        max_length=30,
-        widget=forms.TextInput(attrs={'class':'form-control input-sm', 'placeholder':'Enter Section description'}))
+        widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter Section description'}))
+
 
     class Meta:
         model = Testsection
         fields = ['section_name', 'section_description']
 
 
-    '''def clean(self):
+    '''def get_section(self):
         data = self.cleaned_data
         section_name = data['section_name']
         section_description = data['section_description']
@@ -60,7 +55,7 @@ class UserForm(ModelForm):
         model = User
         fields = ('username','email')
 
-    '''
+
     def clean_username(self):
         username = self.cleaned_data['username']
         if username == "":
@@ -70,7 +65,10 @@ class UserForm(ModelForm):
         email = self.cleaned_data['username']
         if email is None:
             raise forms.ValidationError("Enter EmailID", code="email",)
-        return email'''
+        return email
+
+
+
 
 
 class CustomUserForm(ModelForm):
