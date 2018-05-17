@@ -210,85 +210,58 @@ def exam2(request):
         print(exception_line_no.tb_lineno,e.args)
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
-# @csrf_exempt
-# def exam21(request):
-#      if request.is_ajax():
-#             questionchoices={}
-#             question_to_pick_id = request.POST['value']
-#             questionchoices['back_answer_choice'] = ""
-#             current_user = request.user
-#             temp_tabl = TempTable.objects.filter(temp_id=question_to_pick_id).first()
-#             if temp_tabl == None:
-#                 questionchoices['temp_table_empty'] = True
-#             else:
-#                 test_id = Test.objects.filter(pk = temp_tabl.temptable_test.test_id ).first()
-#                 candidate_choices= request.POST.getlist("choicetext[]")
-#                 user = User.objects.get(username=current_user)
-#                 current_temp_tabl = TempTable.objects.filter(temp_id=int(question_to_pick_id)-1).first()
-#                 if  not current_temp_tabl:
-#                     question = Question.objects.filter(pk =temp_tabl.temptable_question.question_id).first()
-#                 else:
-#                     question = Question.objects.filter(question_id = current_temp_tabl.temptable_question.question_id ).first()
-#
-#                 for eachchoice in candidate_choices:
-#                     tmpresponse_question = TempResponse.objects.filter(choice_question__question_id = question.question_id )
-#                     if tmpresponse_question:
-#                         tmpresponse = TempResponse.objects.get(choice_question__question_id = question.question_id )
-#
-#                         tmpresponse.choice_text = eachchoice
-#                         tmpresponse.save()
-#                     else:
-#                         tmpresponse = TempResponse()
-#                         tmpresponse.temp_response_user = user
-#                         tmpresponse.choice_question = question
-#                         tmpresponse.choice_text = eachchoice
-#                         tmpresponse.temp_response_test = test_id
-#                         tmpresponse.save()
-#                 choices = QuestionChoice.objects.filter(choice_question__question_id=temp_tabl.temptable_question.question_id)
-#                 questionchoices['question'] = temp_tabl.temptable_question.question_text
-#                 questionchoices['choices'] = [ choice.choice_text for choice in choices ]
-#                 questionchoices['choice_type'] = temp_tabl.temptable_question.question_type.questiontype_name
-#                 questionchoices['temp_id'] =  temp_tabl.temp_id
-#                 questionchoices['test_id'] = test_id.test_id
-#
-#                 tmpresponse_question = TempResponse.objects.filter(choice_question__question_id = temp_tabl.temptable_question.question_id ).first()
-#
-#                 if tmpresponse_question:
-#                     questionchoices['back_answer_choice'] = tmpresponse_question.choice_text
-#
-#                 print(questionchoices['back_answer_choice'])
-#             serializeddata = json.dumps(questionchoices)
-#             return HttpResponse(serializeddata, content_type='application/json')
 
 
 def evaluate(request,test_id):
-     try:
-        sample=[]
+   try:
+
         current_user = request.user
         user = User.objects.filter(username = current_user).first()
         temp_response_list =TempResponse.objects.filter(temp_response_user__id=user.id, temp_response_test__test_id=test_id)\
-            .values('choice_question__question_id', 'choice_text').distinct()
-        #print(temp_response_list)
+            .values('choice_question__question_id').distinct()
+
+        marks=0
+        correct_answers=0
+        result_list={}
+        print(temp_response_list)
         for temp_resp in temp_response_list:
+            print()
             for key,value in temp_resp.items():
+
+
                 if key == 'choice_question__question_id':
-                    ques_choice_list = QuestionChoice.objects.filter(choice_question__question_id=value, choice_is_correct=True)\
-                     .values('choice_question__question_id', 'choice_text')
-                    choice_list = [x for x in temp_response_list if x in ques_choice_list ]
-                    if choice_list:
-                        sample.append(choice_list)
+                    temp_count= TempResponse.objects.filter(choice_question__question_id=value, temp_response_test__test_id=test_id).count()
+                    question_count= QuestionChoice.objects.filter(choice_question__question_id=value,choice_is_correct=True).count()
+
+                    if temp_count == question_count:
+                        temp_response =TempResponse.objects.filter(choice_question__question_id=value, temp_response_test__test_id=test_id)\
+                         .values('choice_question__question_id', 'choice_text').distinct()
+                        ques_choice_list = QuestionChoice.objects.filter(choice_question__question_id=value,choice_is_correct=True)\
+                         .values('choice_question__question_id', 'choice_text')
+
+                        count=0
+                        for x in ques_choice_list:
+                            if x in temp_response:
+                              count=count+1
+                              #print(count)
+                            else:
+                                break
+                        if  len(ques_choice_list)==count:
+                            print(len(ques_choice_list))
+                            print(count)
+                            print()
+                            correct_answers=correct_answers+1
+                            print(correct_answers)
+
 
         total_questions = len(set(TempTable.objects.all()))
-        print(total_questions)
-        correct_answers = len(sample)
-        print(correct_answers)
         candidate_percentage =int((correct_answers / total_questions)*100)
         test_status_object=TestMapping.objects.get(testmap_userid=current_user,testmap_testid=test_id)
         if candidate_percentage > 75:
-            test_status_object.testmap_status=1
+            test_status_object.testmap_status = 1
             result = "Pass"
         else:
-            test_status_object.testmap_status=2
+            test_status_object.testmap_status = 2
             result = "Fail"
         test_status_object.save()
         TempTable.objects.all().delete()
@@ -298,5 +271,4 @@ def evaluate(request,test_id):
 
      except Exception as e:
               return render(request,'candidate/evaluate.html')
-
 

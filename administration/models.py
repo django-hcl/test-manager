@@ -43,7 +43,7 @@ class Test(BaseModel):
     
 
     def __str__(self):
-        return '%s' % self.test_name
+        return str(self.test_name)
 
 class Testsection(BaseModel):
     section_id = models.AutoField(primary_key=True)

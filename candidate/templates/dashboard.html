@@ -11,7 +11,8 @@
 
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap.min.js"></script>
-    <script src="{% static 'js/custom_js.js' %}"></script>
+    <script src="{% static 'js/datatables_js.js' %}"></script>
+
 
 
 </head>
@@ -20,10 +21,10 @@
   <nav class="navbar navbar-inverse">
       <div class="container-fluid">
        <div class="navbar-header">
-      <a class="navbar-brand" href="">Techie Talent</a>
+      <a class="navbar-brand" href=""><span class="glyphicon glyphicon-education"></span> Techie Talent</a>
        </div>
         <ul class="nav navbar-nav">
-            <li ><a href="/candidate">Active Test</a></li>
+            <li ><a href="/candidate" >Active Test</a></li>
              <li><a href="/candidate/completed">Completed</a></li>
         </ul>
 
@@ -56,12 +57,12 @@
           </div>
 
 
-
 {% block content %}
 {% endblock %}
 
  </div>
 
+<script>
 
 
 

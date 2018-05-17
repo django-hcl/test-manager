@@ -2,7 +2,13 @@
 
 {% block content %}
 
+<style>
 
+
+    .navbar{
+    display:none
+    }
+</style>
 <div class="col-lg-6">
     <div class="panel panel-primary">
         <div class="panel-heading">Result</div>
@@ -18,10 +24,57 @@
 
 
             </div>
+        <div id="chart_div"></div>
 
         </div>
     </div>
-</div>
+         <div class="row">
+             <center>
+            <button class="btn btn-sm btn-primary " onclick="window.close()">Close</button>
+            </center>    </div>
+    </div>
+
+
+
+
+
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+
+      google.charts.load('current', {'packages':['corechart']});
+      google.charts.setOnLoadCallback(drawChart);
+
+
+      function drawChart() {
+
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Slices');
+        data.addColumn('number', 'Topping');
+            data.addRows([
+              ['Correct Answers',{{correct_answers}}],
+              ['Incorrect Answers',parseInt({{total_questions}})-parseInt({{correct_answers}})],
+
+            ]);
+
+
+        var options = {'title':'Report',
+                       'width':600,
+                       'height':300,
+                       'colors': ['green','red'],
+                       'is3D':true};
+
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+    </script>
+
+
+    <!--Div that will hold the pie chart-->
+
 
 
 {% endblock %}

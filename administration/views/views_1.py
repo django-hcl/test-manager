@@ -62,11 +62,15 @@ def logout_function(request):
 @login_required
 def role_add(request):
 
-    try:
-        role_add_list = Role()
+ try:
+    role_add_list = Role()
+    role_form = RoleForm()
+    if request.method == 'POST':
+        role_exists = Role.objects.filter(role_name__iexact = request.POST.get('role_name'))
 
-        if request.method == 'POST':
-            role_exists = Role.objects.filter(role_name = request.POST.get('role_name'))
+        if role_exists:
+            role_exists_error = True
+            return render(request, 'administration/role_add.html', {'role_exists_error': role_exists_error,'role_form': role_form})
 
             if role_exists:
                 role_exists_error = True
@@ -80,13 +84,23 @@ def role_add(request):
                 role_add_list.save()
                 return HttpResponseRedirect(reverse('role_list'))
         else:
-            role_form = RoleForm()
-            return render(request, 'administration/role_add.html',{'role_form': role_form})
 
-    except Exception as e:
-        exception_line_no = sys.exc_info()[2]
-        print(exception_line_no.tb_lineno,e.args)
-        return HttpResponseNotFound('<h1>Page not found</h1>')
+            role_add_list.role_name = re.sub(' +', ' ', request.POST.get('role_name').strip())
+            role_add_list.role_name = role_add_list.role_name[:1].upper() + role_add_list.role_name[1:]
+            role_add_list.role_description = re.sub(' +', ' ', request.POST.get('role_description').strip())
+            role_add_list.role_description = role_add_list.role_description[:1].upper() + role_add_list.role_description[1:]
+            role_add_list.save()
+            return HttpResponseRedirect(reverse('role_list'))
+    else:
+        return render(request, 'administration/role_add.html',{'role_form': role_form})
+except Exception as e:
+    exception_line_no = sys.exc_info()[2]
+    print(exception_line_no.tb_lineno,e.args)
+    return HttpResponseNotFound('<h1>Page not found</h1>')  
+
+
+
+
 
 @login_required
 def role_list(request):
@@ -127,8 +141,9 @@ def role_edit(request,id):
 
 @login_required
 def user_list(request):
+
     try:
-        user_lists = Customuser.objects.values('custom_userid','custom_userid__username','custom_userid__email','custom_roleid','created_by')
+        user_lists = Customuser.objects.values('custom_userid','custom_userid__username','custom_userid__email','custom_roleid__role_name','created_by__username')
         return render(request, 'administration/user_list.html',{'user_lists': user_lists})
 
     except Exception as e:
@@ -136,36 +151,37 @@ def user_list(request):
         print(exception_line_no.tb_lineno,e.args)
         return HttpResponseNotFound('<h1>Page not found</h1>')
 
+
 @login_required
 def user_add(request):
 
-    try:
-        role_instance = Role.objects.all()
-        role_arqument = sorted(role_instance, key = lambda Role:Role.role_description)
 
-        if request.method == 'POST':
-            username = request.POST['username']
-            password = request.POST['password']
-            emailid = request.POST['emailid']
-            roleid = request.POST['roleid']
-            if not (User.objects.filter(username=username).exists()):
-                    User.objects.create_user(username, emailid, password)
-                    Customuser_instance = Customuser()
-                    Customuser_instance.custom_userid = User.objects.latest('id')
-                    Customuser_instance.custom_roleid = Role.objects.get(role_id=roleid)
-                    Customuser_instance.created_by = User.objects.get(id = request.user.id)
-                    Customuser_instance.save()
-                    return HttpResponseRedirect('/admin/user')
-            else:
-                useradd_error = True
-                return render(request, 'administration/user_add.html',{'role_arqument':role_arqument,'useradd_error':useradd_error})
+ try:
+    role_instance = Role.objects.all()
+    role_arqument = sorted(role_instance, key = lambda Role:Role.role_description)
+    user = User()
+    if request.method == 'POST':
+        user.username = re.sub(' +', ' ', request.POST.get('username').strip())
+        user.username = user.username[:1].upper() + user.username[1:]
+        user.password = request.POST['password']
+        user.emailid = request.POST['emailid']
+        roleid = request.POST['roleid']
+        if not (User.objects.filter(username__iexact=user.username).exists()):
+                User.objects.create_user(user.username, user.password, user.emailid)
+                Customuser_instance = Customuser()
+                Customuser_instance.custom_userid = User.objects.latest('id')
+                Customuser_instance.custom_roleid = Role.objects.get(role_id=roleid)
+                Customuser_instance.created_by = User.objects.get(id = request.user.id)
+                Customuser_instance.save()
+                return HttpResponseRedirect('/admin/user')
+
         else:
             return render(request, 'administration/user_add.html',{'role_arqument':role_arqument})
 
-    except Exception as e:
-        exception_line_no = sys.exc_info()[2]
-        print(exception_line_no.tb_lineno,e.args)
-        return HttpResponseNotFound('<h1>Page not found</h1>')
+except Exception as e:
+    exception_line_no = sys.exc_info()[2]
+    print(exception_line_no.tb_lineno,e.args)
+    return HttpResponseNotFound('<h1>Page not found</h1>')
 
 
 @login_required
@@ -327,14 +343,16 @@ def question_choice_list(request):
 @login_required
 def complexity_add(request):
 
+
     try:
         complexity_add_list = Complexity()
+        complexity_form = ComplexityForm()
         if request.method == 'POST':
-            complexity_exists = Complexity.objects.filter(complex_name = request.POST.get('complex_name'))
+            complexity_exists = Complexity.objects.filter(complex_name__iexact = request.POST.get('complex_name'))
 
             if complexity_exists:
                 complexity_exists_error = True
-                return render(request, 'administration/complexity_add.html', {'complexity_exists_error': complexity_exists_error})
+                return render(request, 'administration/complexity_add.html', {'complexity_exists_error': complexity_exists_error,'complexity_form': complexity_form})
             else:
                 complexity_add_list.complex_name = re.sub(' +', ' ', request.POST.get('complex_name').strip())
                 complexity_add_list.complex_name = complexity_add_list.complex_name[:1].upper() + complexity_add_list.complex_name[1:]
@@ -344,13 +362,13 @@ def complexity_add(request):
                 return HttpResponseRedirect(reverse('complexity_list'))
 
         else:
-            complexity_form = ComplexityForm()
             return render(request, 'administration/complexity_add.html',{'complexity_form': complexity_form})
 
-    except Exception as e:
-        exception_line_no = sys.exc_info()[2]
-        print(exception_line_no.tb_lineno,e.args)
-        return HttpResponseNotFound('<h1>Page not found</h1>')
+     except Exception as e:
+          exception_line_no = sys.exc_info()[2]
+          print(exception_line_no.tb_lineno,e.args)
+          return HttpResponseNotFound('<h1>Page not found</h1>')
+
 
 @login_required
 def complexity_list(request):
@@ -390,16 +408,20 @@ def complexity_edit(request, id):
 @login_required
 def questiontype_add(request):
 
+
     try:
         question_type_add_list = QuestionType()
-
+        question_type_form = QuestionTypeForm()
         if request.method == 'POST':
-            question_type_exists = QuestionType.objects.filter(questiontype_name = request.POST.get('questiontype_name'))
+            question_type_exists = QuestionType.objects.filter(questiontype_name__iexact = request.POST.get('questiontype_name'))
 
             if question_type_exists:
                 question_type_exists_error = True
-                return render(request, 'administration/questiontype_add.html', {'question_type_exists_error': question_type_exists_error})
+                return render(request, 'administration/questiontype_add.html', {'question_type_exists_error': question_type_exists_error,
+                                                                            'question_type_form': question_type_form})
 
+
+           
             else:
                 question_type_add_list.questiontype_name = re.sub(' +', ' ', request.POST.get('questiontype_name').strip())
                 question_type_add_list.questiontype_name = question_type_add_list.questiontype_name[:1].upper() + question_type_add_list.questiontype_name[1:]
@@ -408,8 +430,8 @@ def questiontype_add(request):
                 question_type_add_list.save()
                 return HttpResponseRedirect(reverse('questiontype_list'))
         else:
-            question_type_form = QuestionTypeForm()
             return render(request, 'administration/questiontype_add.html',{'question_type_form': question_type_form})
+
 
     except Exception as e:
         exception_line_no = sys.exc_info()[2]

@@ -25,23 +25,18 @@ class TestForm(ModelForm):
 
 class TestsectionForm(ModelForm):
     section_name = forms.CharField(
-        required=True,
-        label='Section Name',
-        max_length=15,
-        widget=forms.TextInput(attrs={'class':'form-control input-sm', 'placeholder':'Enter Section Name'})
+        widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter Section Name'})
     )
     section_description = forms.CharField(
-        required=True,
-        label='Section Name',
-        max_length=30,
-        widget=forms.TextInput(attrs={'class':'form-control input-sm', 'placeholder':'Enter Section description'}))
+        widget=forms.TextInput(attrs={'class':'form-control', 'placeholder':'Enter Section description'}))
+
 
     class Meta:
         model = Testsection
         fields = ['section_name', 'section_description']
 
 
-    '''def clean(self):
+    '''def get_section(self):
         data = self.cleaned_data
         section_name = data['section_name']
         section_description = data['section_description']
@@ -61,6 +56,7 @@ class UserForm(ModelForm):
         model = User
         fields = ('username','email')
 
+
     def clean(self):
         data = self.cleaned_data
         print(data['username'])
@@ -79,6 +75,7 @@ class UserForm(ModelForm):
             raise forms.ValidationError("A user with that email already exists.")
         else:
             return self.cleaned_data['email']
+
 
 
 class CustomUserForm(ModelForm):
