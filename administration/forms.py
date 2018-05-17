@@ -48,7 +48,8 @@ class TestsectionForm(ModelForm):
 
 
 class UserForm(ModelForm):
-    username = forms.CharField(widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Username'}))
+
+    username = forms.CharField( required=True,widget=forms.TextInput(attrs={'class':'form-control ','placeholder':'Username'}))
     email = forms.CharField(widget=forms.EmailInput(attrs={'class':'form-control','placeholder':'Email'}))
 
     class Meta:
@@ -56,18 +57,24 @@ class UserForm(ModelForm):
         fields = ('username','email')
 
 
-    def clean_username(self):
-        username = self.cleaned_data['username']
-        if username == "":
-            raise forms.ValidationError("Enter a username", code="username",)
-        return username
+    def clean(self):
+        data = self.cleaned_data
+        print(data['username'])
+
+        existing = User.objects.filter(username= data['username)']).exists()
+        if existing:
+            raise forms.ValidationError("A user with that username already exists.")
+        if data['username'] == "":
+            raise forms.ValidationError("username cannot be empty")
+        else:
+            return self.cleaned_data['username']
+
     def clean_email(self):
-        email = self.cleaned_data['username']
-        if email is None:
-            raise forms.ValidationError("Enter EmailID", code="email",)
-        return email
-
-
+        existing = User.objects.filter(email=self.cleaned_data['email'])
+        if existing.exists():
+            raise forms.ValidationError("A user with that email already exists.")
+        else:
+            return self.cleaned_data['email']
 
 
 
@@ -120,6 +127,8 @@ class ComplexityForm(ModelForm):
     class Meta:
         model = Complexity
         fields = ('complex_name','complex_description')
+
+
 
 
 class QuestionTypeForm(ModelForm):
